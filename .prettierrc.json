@@ -1,0 +1,16 @@
+{
+    "printWidth": 160,
+    "tabWidth": 4,
+    "trailingComma": "es5",
+    "bracketSpacing": false,
+    "semi": true,
+    "overrides": [
+        {
+            "files": "*.sol",
+            "options": {
+                "printWidth": 160,
+                "plugins": ["prettier-plugin-solidity"]
+            }
+        }
+    ]
+}

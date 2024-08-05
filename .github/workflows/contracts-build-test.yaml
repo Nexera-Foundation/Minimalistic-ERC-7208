@@ -1,0 +1,39 @@
+name: Build and Test
+on: [pull_request]
+
+jobs:
+    build-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+                  submodules: 'recursive' # Fetch submodules
+
+            - name: Setup NodeJS 20
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20
+
+            - name: Prepare .npmrc
+              run: |
+                  echo "" >> .npmrc
+                  echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" >> .npmrc
+                  cat .npmrc
+
+            - name: Install yarn
+              run: npm install -g yarn
+
+            - name: Clean cache
+              run: yarn cache clean
+
+            - name: Install dependencies
+              run: yarn install
+
+            - name: Build Contracts
+              run: yarn build
+
+            - name: Test Contracts - Hardhat
+              run: yarn test

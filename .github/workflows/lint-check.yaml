@@ -1,0 +1,35 @@
+name: Lint check contracts
+on: [pull_request]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["20"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Prepare .npmrc
+        run: |
+            echo "" >> .npmrc
+            echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_ACCESS_TOKEN }}" >> .npmrc
+            cat .npmrc
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install --check-cache
+
+      ### Run lint
+      - name: Check contracts solidity linter
+        if: always()
+        run: yarn run pr:lint:check:contracts
+
+      - name: Check contracts tests linter
+        if: always()
+        run: yarn run pr:lint:check:tests

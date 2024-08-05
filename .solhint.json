@@ -1,0 +1,16 @@
+{
+    "extends": "solhint:recommended",
+    "plugins": ["prettier"],
+    "rules": {
+      "compiler-version": ["error", "^0.8.21"],
+      "func-visibility": ["warn", { "ignoreConstructors": true }],
+      "func-order": "off",
+      "mark-callable-contracts": "off",
+      "no-empty-blocks": "off",
+      "reason-string": "warn",
+      "private-vars-leading-underscore": "error",
+      "not-rely-on-time": "off",
+      "var-name-mixedcase": "off",
+      "max-states-count": "off"
+    }
+}
