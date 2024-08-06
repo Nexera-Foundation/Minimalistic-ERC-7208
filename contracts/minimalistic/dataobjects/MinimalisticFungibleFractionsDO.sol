@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts/utils/Arrays.sol";
-import "../interfaces/IIDManager.sol";
-import "../interfaces/IFungibleFractionsOperations.sol";
-import "../interfaces/IDataPointRegistry.sol";
-import "../interfaces/IDataIndex.sol";
-import "../interfaces/IDataObject.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import {Arrays} from "@openzeppelin/contracts/utils/Arrays.sol";
+import {IFungibleFractionsOperations} from "../interfaces/IFungibleFractionsOperations.sol";
+import {IDataPointRegistry} from "../interfaces/IDataPointRegistry.sol";
+import {IDataIndex} from "../interfaces/IDataIndex.sol";
+import {IDataObject} from "../interfaces/IDataObject.sol";
+import {DataPoints, DataPoint} from "../utils/DataPoints.sol";
+import {ChainidTools} from "../utils/ChainidTools.sol";
 
 /**
  * @title Minimalistic Fungible Fractions Data Object
