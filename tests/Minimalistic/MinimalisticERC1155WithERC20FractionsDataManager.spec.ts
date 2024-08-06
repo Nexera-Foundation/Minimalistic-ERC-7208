@@ -102,6 +102,16 @@ export default async function suite(): Promise<void> {
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.getFunction("totalSupply(uint256)")(1)).to.equal(1000);
         });
 
+        it("should burn fractions and update balanceOf and totalSupply", async function () {
+            await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
+
+            await expect(MinimalisticERC1155WithERC20FractionsDataManager.burn(user1.address, 1, 500))
+                .to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "TransferSingle");
+
+            expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user1.address, 1)).to.equal(500);
+            expect(await MinimalisticERC1155WithERC20FractionsDataManager.getFunction("totalSupply(uint256)")(1)).to.equal(500);
+        });
+
         it("should transfer fractions and update balanceOf", async function () {
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
 
