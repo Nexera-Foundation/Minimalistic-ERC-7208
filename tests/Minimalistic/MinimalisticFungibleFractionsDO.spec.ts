@@ -31,7 +31,7 @@ export default async function suite(): Promise<void> {
             MinimalisticFungibleFractionsDO = this.MinimalisticFungibleFractionsDO;
 
             IFungibleFractionsOperations = new ethers.Interface(
-                factories.contracts.minimalistic.interfaces.IFungibleFractionsOperations__factory.abi
+                factories.contracts.interfaces.IFungibleFractionsOperations__factory.abi
             );
 
             dp = await DataPointRegistry.allocate.staticCall(user1.address);
