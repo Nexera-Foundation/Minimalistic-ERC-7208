@@ -12,7 +12,6 @@ import {IFungibleFractionsOperations} from "../interfaces/IFungibleFractionsOper
 import {IFractionTransferEventEmitter} from "../interfaces/IFractionTransferEventEmitter.sol";
 import {DataPoint} from "../utils/DataPoints.sol";
 
-
 /**
  * @title Minimalistic ERC20 Fraction Data Manager
  * @notice Contract for managing ERC20 fractions of an ERC1155 token
