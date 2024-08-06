@@ -17,7 +17,6 @@ import {IFractionTransferEventEmitter} from "../interfaces/IFractionTransferEven
 import {DataPoint} from "../utils/DataPoints.sol";
 import {IFungibleFractionsOperations} from "../interfaces/IFungibleFractionsOperations.sol";
 
-
 /**
  * @title Minimalistic ERC1155 With ERC20 Fractions Data Manager
  * @notice Contract for managing ERC1155 tokens with ERC20 fractions
@@ -420,18 +419,12 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     }
 
     function _writeTransferBatch(address from, address to, uint256[] memory ids, uint256[] memory values) internal virtual {
-        if (from == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.batchMint.selector, abi.encode(to, ids, values));
-        } else if (to == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.batchBurn.selector, abi.encode(from, ids, values));
-        } else {
-            dataIndex.write(
-                address(fungibleFractionsDO),
-                datapoint,
-                IFungibleFractionsOperations.batchTransferFrom.selector,
-                abi.encode(from, to, ids, values)
-            );
-        }
+        dataIndex.write(
+            address(fungibleFractionsDO),
+            datapoint,
+            IFungibleFractionsOperations.batchTransferFrom.selector,
+            abi.encode(from, to, ids, values)
+        );
     }
 
     /**
@@ -445,9 +438,14 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         _mint(to, id, value, data);
     }
 
-    /// @dev Not supported
-    function batchMint(address, uint256[] memory, uint256[] memory, bytes memory) public pure {
-        revert("Batch mint not supported"); // it will be very expensive anyway
+    /**
+     * @notice Burn tokens
+     * @param from The address to burn tokens from
+     * @param id The token ID
+     * @param value The amount of tokens to burn
+     */
+    function burn(address from, uint256 id, uint256 value) public virtual {
+        _burn(from, id, value);
     }
 
     /**
@@ -468,6 +466,11 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         if (id == 0) revert IncorrectId(id);
         _deployERC20DMIfNotDeployed(id, data);
         _updateWithAcceptanceCheck(address(0), to, id, value, data);
+    }
+
+    function _burn(address from, uint256 id, uint256 value) internal virtual {
+        if (id == 0) revert IncorrectId(id);
+        _updateWithAcceptanceCheck(from, address(0), id, value, "");
     }
 
     function _update(address from, address to, uint256 id, uint256 value) internal {
