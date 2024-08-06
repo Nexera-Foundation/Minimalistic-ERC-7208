@@ -419,12 +419,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     }
 
     function _writeTransferBatch(address from, address to, uint256[] memory ids, uint256[] memory values) internal virtual {
-        dataIndex.write(
-            address(fungibleFractionsDO),
-            datapoint,
-            IFungibleFractionsOperations.batchTransferFrom.selector,
-            abi.encode(from, to, ids, values)
-        );
+        dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.batchTransferFrom.selector, abi.encode(from, to, ids, values));
     }
 
     /**

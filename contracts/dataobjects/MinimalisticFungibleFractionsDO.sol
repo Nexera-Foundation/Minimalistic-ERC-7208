@@ -320,7 +320,7 @@ contract MinimalisticFungibleFractionsDO is IDataObject {
 
     function _tryDiid(DataPoint dp, address account) internal view returns (bytes32) {
         DataPointStorage storage dps = _dataPointStorage(dp);
-        if(address(dps.dataIndexImplementation) == address(0)) return 0;
+        if (address(dps.dataIndexImplementation) == address(0)) return 0;
         try dps.dataIndexImplementation.diid(account, dp) returns (bytes32 diid) {
             return diid;
         } catch {

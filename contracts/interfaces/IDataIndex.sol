@@ -10,7 +10,7 @@ import {IIDManager} from "./IIDManager.sol";
  * @notice The interface defines functions to manage the access control of DataManagers to
  *         DataPoints as well as to the data related to these DataPoints in specific dataObjects
  */
-interface IDataIndex is IIDManager{
+interface IDataIndex is IIDManager {
     /**
      * @notice Verifies if DataManager is allowed to write in specific DataPoint
      * @param dp Identifier of the DataPoint
