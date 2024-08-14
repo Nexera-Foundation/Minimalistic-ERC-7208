@@ -31,6 +31,9 @@ import {IFungibleFractionsOperations} from "../interfaces/IFungibleFractionsOper
 contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEventEmitter, IERC1155, IERC1155Errors, ERC165, Ownable {
     using Arrays for uint256[];
 
+    /// @dev Error thrown when the parameters are wrong
+    error WrongParameters();
+
     /// @dev Error thrown when the ERC1155 token ID is zero
     error IncorrectId(uint256 id);
 
@@ -82,6 +85,10 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         string memory name_,
         string memory symbol_
     ) Ownable(msg.sender) {
+        if (_dp == bytes32(0) || _dataIndex == address(0) || _fungibleFractionsDO == address(0) || _erc20FractionsDMFactory == address(0)) {
+            revert WrongParameters();
+        }
+
         _name = name_;
         _symbol = symbol_;
         datapoint = DataPoint.wrap(_dp);
@@ -459,12 +466,23 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     function _mint(address to, uint256 id, uint256 value, bytes memory data) internal virtual {
         if (id == 0) revert IncorrectId(id);
+
+        if (to == address(0)) {
+            revert ERC1155InvalidReceiver(address(0));
+        }
+
         _deployERC20DMIfNotDeployed(id, data);
         _updateWithAcceptanceCheck(address(0), to, id, value, data);
     }
 
     function _burn(address from, uint256 id, uint256 value) internal virtual {
         if (id == 0) revert IncorrectId(id);
+
+        address sender = _msgSender();
+        if (from != sender && !isApprovedForAll(from, sender)) {
+            revert ERC1155MissingApprovalForAll(sender, from);
+        }
+
         _updateWithAcceptanceCheck(from, address(0), id, value, "");
     }
 

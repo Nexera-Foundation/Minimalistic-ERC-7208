@@ -20,6 +20,9 @@ import {DataPoint} from "../utils/DataPoints.sol";
  *      NOTE: This implementation is minimalistic and does not include minting and burning functionalities.
  */
 contract MinimalisticERC20FractionDataManager is IFractionTransferEventEmitter, IERC20, IERC20Errors, OwnableUpgradeable {
+    /// @dev Error thrown when one or more parameters are wrong
+    error WrongParams();
+
     /// @dev Decimals for the ERC20 token (set to 0)
     uint8 private constant DECIMALS = 0;
 
@@ -76,6 +79,10 @@ contract MinimalisticERC20FractionDataManager is IFractionTransferEventEmitter, 
         string memory name_,
         string memory symbol_
     ) internal onlyInitializing {
+        if (_datapoint == bytes32(0) || _dataIndex == address(0) || _fungibleFractionsDO == address(0) || _erc1155dm == address(0)) {
+            revert WrongParams();
+        }
+
         datapoint = DataPoint.wrap(_datapoint);
         dataIndex = IDataIndex(_dataIndex);
         fungibleFractionsDO = IDataObject(_fungibleFractionsDO);

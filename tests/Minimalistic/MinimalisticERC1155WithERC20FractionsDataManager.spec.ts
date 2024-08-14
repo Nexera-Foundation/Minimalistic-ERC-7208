@@ -105,7 +105,7 @@ export default async function suite(): Promise<void> {
         it("should burn fractions and update balanceOf and totalSupply", async function () {
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
 
-            await expect(MinimalisticERC1155WithERC20FractionsDataManager.burn(user1.address, 1, 500))
+            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).burn(user1.address, 1, 500))
                 .to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "TransferSingle");
 
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user1.address, 1)).to.equal(500);
