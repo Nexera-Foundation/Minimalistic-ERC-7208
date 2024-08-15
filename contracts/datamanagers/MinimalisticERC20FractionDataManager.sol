@@ -19,7 +19,7 @@ import {DataPoint} from "../utils/DataPoints.sol";
  *      contract as a ERC20 token, exposing the ERC20 functionalities and emitting the Transfer event.
  *      NOTE: This implementation is minimalistic and does not include minting and burning functionalities.
  */
-contract MinimalisticERC20FractionDataManager is IFractionTransferEventEmitter, IERC20, IERC20Errors, OwnableUpgradeable {
+contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransferEventEmitter, IERC20, IERC20Metadata, IERC20Errors, OwnableUpgradeable {
     /// @dev Error thrown when one or more parameters are wrong
     error WrongParams();
 
