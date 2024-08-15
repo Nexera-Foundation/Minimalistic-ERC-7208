@@ -206,7 +206,8 @@ contract MinimalisticFungibleFractionsDO is IDataObject {
     function _balanceOfBatchAccounts(DataPoint dp, address[] memory accounts, uint256[] memory ids) internal view returns (uint256[] memory balances) {
         if (accounts.length != ids.length) revert ArrayLengthMismatch();
         balances = new uint256[](accounts.length);
-        for (uint256 i; i < accounts.length; i++) {
+        uint256 length = accounts.length;
+        for (uint256 i; i < length; i++) {
             uint256 id = ids.unsafeMemoryAccess(i);
             address account = accounts.unsafeMemoryAccess(i);
             bytes32 diid = _tryDiid(dp, account);
@@ -278,7 +279,8 @@ contract MinimalisticFungibleFractionsDO is IDataObject {
         bytes32 diidTo = _diid(dp, to);
         DiidData storage diiddFrom = _diidData(dp, diidFrom);
         DiidData storage diiddTo = _diidData(dp, diidTo);
-        for (uint256 i; i < ids.length; i++) {
+        uint256 length = ids.length;
+        for (uint256 i; i < length; i++) {
             uint256 id = ids.unsafeMemoryAccess(i);
             uint256 value = values.unsafeMemoryAccess(i);
             _decreaseBalance(diiddFrom, id, value, dp, diidFrom);

@@ -31,6 +31,9 @@ contract DataIndex is IDataIndex, AccessControl {
      */
     event DataPointDMApprovalChanged(DataPoint dp, address dm, bool approved);
 
+    /// @dev Mask to get the prefis (first 12 bytes) of the diid
+    bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000;
+
     /// @dev Mapping of DataPoint to DataManagers allowed to write to this DP (in any DataObject)
     mapping(DataPoint => mapping(address dm => bool allowed)) dmApprovals;
 
@@ -89,7 +92,7 @@ contract DataIndex is IDataIndex, AccessControl {
 
     ///@inheritdoc IIDManager
     function ownerOf(bytes32 _diid) external view returns (uint32, address) {
-        if (_diid & 0xFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000 != 0) revert IncorrectIdentifier(_diid); // Require first 12 bytes empty, leaving only 20 bytes of address non-empty
+        if (_diid & PREFIX_MASK != 0) revert IncorrectIdentifier(_diid); // Require first 12 bytes empty, leaving only 20 bytes of address non-empty
         address account = address(uint160(uint256(_diid)));
         if (account == address(0)) revert IncorrectIdentifier(_diid);
         return (ChainidTools.chainid(), account);

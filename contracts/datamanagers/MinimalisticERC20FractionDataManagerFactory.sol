@@ -10,14 +10,21 @@ import {MinimalisticERC20FractionDataManager} from "./MinimalisticERC20FractionD
  *      This contract does not have any access control on who can deploy new contracts
  */
 contract MinimalisticERC20FractionDataManagerFactory {
+    /// @notice Event emitted when a new MinimalisticERC20FractionDataManager contract is deployed
+    event Deployed(address indexed addr, uint256 id);
+
     /**
      * @dev Deploys a new MinimalisticERC20FractionDataManager contract
      * @param id The id of the contract
-     * @return The address of the deployed contract
+     * @return addr The address of the deployed contract
      * @dev The address of the deployed contract is deterministic based on the sender and id
      */
-    function deploy(uint256 id) external returns (address) {
+    function deploy(uint256 id) external returns (address addr) {
         bytes32 salt = keccak256(abi.encodePacked(msg.sender, id));
-        return Create2.deploy(0, salt, type(MinimalisticERC20FractionDataManager).creationCode);
+
+        addr = Create2.deploy(0, salt, type(MinimalisticERC20FractionDataManager).creationCode);
+        emit Deployed(addr, id);
+
+        return addr;
     }
 }

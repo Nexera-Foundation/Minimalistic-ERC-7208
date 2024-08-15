@@ -28,14 +28,20 @@ import {IFungibleFractionsOperations} from "../interfaces/IFungibleFractionsOper
  *      2. Deploy ERC1155WithERC20FractionsDataManager (or an extending contract)
  *      3. Grant Admin role on the DataPoint to the deployed contract
  */
-contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEventEmitter, IERC1155, IERC1155Errors, ERC165, Ownable {
+contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEventEmitter, IERC1155, IERC1155Errors, IERC1155MetadataURI, ERC165, Ownable {
     using Arrays for uint256[];
+
+    /// @dev Error thrown when the parameters are wrong
+    error WrongParameters();
 
     /// @dev Error thrown when the ERC1155 token ID is zero
     error IncorrectId(uint256 id);
 
     /// @notice Event emitted when a ERC20FractionDataManager contract is deployed
     event ERC20FractionDataManagerDeployed(uint256 id, address dm);
+
+    /// @notice Event emitted when the default URI is set
+    event DefaultURISet(string defaultURI);
 
     /// @dev Name of the ERC1155 token
     string private _name;
@@ -53,7 +59,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     IDataObject public immutable fungibleFractionsDO;
 
     /// @dev Data Index implementation
-    IDataIndex public dataIndex;
+    IDataIndex public immutable dataIndex;
 
     /// @dev Mapping of approvals state for an address to an operator
     mapping(address account => mapping(address operator => bool)) private _operatorApprovals;
@@ -65,7 +71,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     mapping(address erc20dm => uint256 id) public fractionManagersByAddress;
 
     /// @dev ERC20FractionDataManager factory contract
-    MinimalisticERC20FractionDataManagerFactory erc20FractionsDMFactory;
+    MinimalisticERC20FractionDataManagerFactory immutable erc20FractionsDMFactory;
 
     /// @notice Modifier to check if the caller is the minter
     modifier onlyMinter() {
@@ -82,6 +88,10 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         string memory name_,
         string memory symbol_
     ) Ownable(msg.sender) {
+        if (_dp == bytes32(0) || _dataIndex == address(0) || _fungibleFractionsDO == address(0) || _erc20FractionsDMFactory == address(0)) {
+            revert WrongParameters();
+        }
+
         _name = name_;
         _symbol = symbol_;
         datapoint = DataPoint.wrap(_dp);
@@ -402,6 +412,8 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     function _setDefaultURI(string memory defaultURI) internal virtual {
         _defaultURI = defaultURI;
+
+        emit DefaultURISet(defaultURI);
     }
 
     function _checkMinter() internal view {
@@ -459,12 +471,23 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     function _mint(address to, uint256 id, uint256 value, bytes memory data) internal virtual {
         if (id == 0) revert IncorrectId(id);
+
+        if (to == address(0)) {
+            revert ERC1155InvalidReceiver(address(0));
+        }
+
         _deployERC20DMIfNotDeployed(id, data);
         _updateWithAcceptanceCheck(address(0), to, id, value, data);
     }
 
     function _burn(address from, uint256 id, uint256 value) internal virtual {
         if (id == 0) revert IncorrectId(id);
+
+        address sender = _msgSender();
+        if (from != sender && !isApprovedForAll(from, sender)) {
+            revert ERC1155MissingApprovalForAll(sender, from);
+        }
+
         _updateWithAcceptanceCheck(from, address(0), id, value, "");
     }
 
@@ -475,7 +498,9 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     function _update(address from, address to, uint256[] memory ids, uint256[] memory values) internal {
         _updateInternal(from, to, ids, values);
-        for (uint256 i; i < ids.length; i++) {
+
+        uint256 length = ids.length;
+        for (uint256 i; i < length; i++) {
             uint256 id = ids.unsafeMemoryAccess(i);
             uint256 value = ids.unsafeMemoryAccess(i); // We have an array length check in ERC1155Transfers._safeBatchTransferFrom()
             _erc20TransferNotify(id, from, to, value);
