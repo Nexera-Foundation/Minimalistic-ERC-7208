@@ -41,7 +41,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     event ERC20FractionDataManagerDeployed(uint256 id, address dm);
 
     /// @notice Event emitted when the default URI is set
-    event defaultURISet(string defaultURI);
+    event DefaultURISet(string defaultURI);
 
     /// @dev Name of the ERC1155 token
     string private _name;
@@ -413,7 +413,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     function _setDefaultURI(string memory defaultURI) internal virtual {
         _defaultURI = defaultURI;
 
-        emit defaultURISet(defaultURI);
+        emit DefaultURISet(defaultURI);
     }
 
     function _checkMinter() internal view {
