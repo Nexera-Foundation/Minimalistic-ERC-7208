@@ -14,9 +14,11 @@ export default async function suite(): Promise<void> {
         let DataIndex: Contract;
         let DataPointRegistry: Contract;
 
-        let MinimalisticFungibleFractionsDO: any;
+        let MinimalisticFungibleFractionsDO: Contract;
 
-        let MinimalisticERC1155WithERC20FractionsDataManager: any;
+        let MinimalisticERC20FractionDataManagerFactory: Contract;
+        
+        let MinimalisticERC1155WithERC20FractionsDataManager: Contract;
 
         let dp: string; // data point
 
@@ -29,17 +31,15 @@ export default async function suite(): Promise<void> {
 
             MinimalisticFungibleFractionsDO = this.MinimalisticFungibleFractionsDO;
 
+            MinimalisticERC20FractionDataManagerFactory = this.MinimalisticERC20FractionDataManagerFactory;
+
             // Set up MinimalisticERC1155WithERC20FractionsDataManager
 
             // Get dp
             dp = await DataPointRegistry.allocate.staticCall(user1.address);
             await DataPointRegistry.allocate(user1.address);
-            
-            // Deploy MinimalisticERC20FractionDataManagerFactory
-            const MinimalisticERC20FractionDataManagerFactoryFactory = await ethers.getContractFactory("MinimalisticERC20FractionDataManagerFactory");
-            const MinimalisticERC20FractionDataManagerFactoryAddress = await (await MinimalisticERC20FractionDataManagerFactoryFactory.deploy()).getAddress();
 
-            await MinimalisticFungibleFractionsDO.connect(user1).setDataIndexImplementation(dp, await DataIndex.getAddress());
+            await MinimalisticFungibleFractionsDO.connect(user1).getFunction("setDataIndexImplementation")(dp, await DataIndex.getAddress());
             
             // Deploy MinimalisticERC1155WithERC20FractionsDataManager
             const MinimalisticERC1155WithERC20FractionsDataManagerFactory = await ethers.getContractFactory("MinimalisticERC1155WithERC20FractionsDataManager");
@@ -47,12 +47,12 @@ export default async function suite(): Promise<void> {
                 dp,
                 await DataIndex.getAddress(),
                 await MinimalisticFungibleFractionsDO.getAddress(),
-                MinimalisticERC20FractionDataManagerFactoryAddress,
+                await MinimalisticERC20FractionDataManagerFactory.getAddress(),
                 "TEST",
                 "TEST",
             )).getAddress();
 
-            MinimalisticERC1155WithERC20FractionsDataManager = await ethers.getContractAt("MinimalisticERC1155WithERC20FractionsDataManager", MinimalisticERC1155WithERC20FractionsDataManagerAddress);
+            MinimalisticERC1155WithERC20FractionsDataManager = await ethers.getContractAt("MinimalisticERC1155WithERC20FractionsDataManager", MinimalisticERC1155WithERC20FractionsDataManagerAddress) as any;
 
             // Allow data manager
             await DataIndex.connect(user1).getFunction("allowDataManager")(dp, MinimalisticERC1155WithERC20FractionsDataManagerAddress, true);

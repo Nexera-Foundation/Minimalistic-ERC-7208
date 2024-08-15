@@ -1,4 +1,4 @@
-import {ethers} from "hardhat";
+import {deployments, ethers} from "hardhat";
 import DataIndex from "./DataIndex.spec";
 import DataPointRegistry from "./DataPointRegistry.spec";
 import MinimalisticFungibleFractionsDO from "./MinimalisticFungibleFractionsDO.spec";
@@ -7,20 +7,19 @@ import MinimalisticERC1155WithERC20FractionsDataManager from "./MinimalisticERC1
 describe("Minimalistic testing", function () {
     before(async function () {
         // Deploy Contracts
-        const DataIndexFactory = await ethers.getContractFactory("DataIndex");
-        const DataIndexAddress = await (await DataIndexFactory.deploy()).getAddress();
+        await deployments.fixture(
+            [
+                "DataIndex",
+                "DataPointRegistry",
+                "MinimalisticFungibleFractionsDO",
+                "MinimalisticERC20FractionDataManagerFactory",
+            ], {keepExistingDeployments: true}
+        );
 
-        this.DataIndex = await ethers.getContractAt("DataIndex", DataIndexAddress);
-
-        const DataPointRegistryFactory = await ethers.getContractFactory("DataPointRegistry");
-        const DataPointRegistryAddress = await (await DataPointRegistryFactory.deploy()).getAddress();
-
-        this.DataPointRegistry = await ethers.getContractAt("DataPointRegistry", DataPointRegistryAddress);
-
-        const MinimalisticFungibleFractionsDOFactory = await ethers.getContractFactory("MinimalisticFungibleFractionsDO");
-        const MinimalisticFungibleFractionsDOAddress = await (await MinimalisticFungibleFractionsDOFactory.deploy()).getAddress();
-
-        this.MinimalisticFungibleFractionsDO = await ethers.getContractAt("MinimalisticFungibleFractionsDO", MinimalisticFungibleFractionsDOAddress);
+        this.DataIndex = await ethers.getContract("DataIndex");
+        this.DataPointRegistry = await ethers.getContract("DataPointRegistry");
+        this.MinimalisticFungibleFractionsDO = await ethers.getContract("MinimalisticFungibleFractionsDO");
+        this.MinimalisticERC20FractionDataManagerFactory = await ethers.getContract("MinimalisticERC20FractionDataManagerFactory");
 
         // Get Signers (with addresses)
         const signers = await ethers.getSigners();
