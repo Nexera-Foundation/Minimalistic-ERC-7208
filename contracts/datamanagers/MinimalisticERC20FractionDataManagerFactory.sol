@@ -21,7 +21,7 @@ contract MinimalisticERC20FractionDataManagerFactory {
      */
     function deploy(uint256 id) external returns (address addr) {
         bytes32 salt = keccak256(abi.encodePacked(msg.sender, id));
-        
+
         addr = Create2.deploy(0, salt, type(MinimalisticERC20FractionDataManager).creationCode);
         emit Deployed(addr, id);
 
