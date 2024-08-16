@@ -39,8 +39,6 @@ export default async function suite(): Promise<void> {
             dp = await DataPointRegistry.allocate.staticCall(user1.address);
             await DataPointRegistry.allocate(user1.address);
 
-            await MinimalisticFungibleFractionsDO.connect(user1).getFunction("setDataIndexImplementation")(dp, await DataIndex.getAddress());
-            
             // Deploy MinimalisticERC1155WithERC20FractionsDataManager
             const MinimalisticERC1155WithERC20FractionsDataManagerFactory = await ethers.getContractFactory("MinimalisticERC1155WithERC20FractionsDataManager");
             const MinimalisticERC1155WithERC20FractionsDataManagerAddress = await (await MinimalisticERC1155WithERC20FractionsDataManagerFactory.deploy(
@@ -59,6 +57,8 @@ export default async function suite(): Promise<void> {
 
             // Transfer ownership
             await DataPointRegistry.connect(user1).getFunction("grantAdminRole")(dp, MinimalisticERC1155WithERC20FractionsDataManagerAddress);
+            
+            await MinimalisticFungibleFractionsDO.connect(user1).getFunction("setDataIndexImplementation")(dp, await DataIndex.getAddress());
         });
 
         beforeEach(async function () {

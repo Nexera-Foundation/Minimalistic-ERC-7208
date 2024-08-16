@@ -10,7 +10,10 @@
     "build": "hardhat compile",
     "deploy": "hardhat deploy",
     "test": "hardhat test tests/index.spec.ts",
-    "coverage": "cross-env HARDHAT_DEPLOY_FIXTURE=true hardhat coverage",
+    "deploy:core": "hardhat deploy --tags DataIndex,DataPointRegistry",
+    "deploy:examples": "hardhat deploy --tags MinimalisticFungibleFractionsDO,MinimalisticERC20FractionDataManagerFactory,MinimalisticERC1155WithERC20FractionsDataManager",
+    "allocateDataPoint": "hardhat run ./scripts/allocateDataPoint.ts",
+    "setUpDataManager": "hardhat run ./scripts/setUpDataManager.ts",
     "lint": "prettier --write **.sol && prettier --write tests/**.ts && prettier --write **/tests/**.ts",
     "pr:lint:check:contracts": "prettier --check **.sol",
     "pr:lint:check:tests": "prettier --check tests/**.ts && prettier --check **/tests/**.ts"

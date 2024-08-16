@@ -31,24 +31,29 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         return false;
     }
 
-    const result = await deploy(contractName, {
-        contract: contractName,
-        from: deployer,
-        args: [
-            ERC1155DataManagerParameters.datapoint,
-            await dataIndex.getAddress(),
-            await MinimalisticFungibleFractionsDO.getAddress(),
-            await MinimalisticERC20FractionDataManagerFactory.getAddress(),
-            ERC1155DataManagerParameters.name,
-            ERC1155DataManagerParameters.symbol,
-        ],
-        log: true,
-        nonce: "pending",
-        waitConfirmations: 1,
-        autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
-    });
+    try{
+        const result = await deploy(contractName, {
+            contract: contractName,
+            from: deployer,
+            args: [
+                ERC1155DataManagerParameters.datapoint,
+                await dataIndex.getAddress(),
+                await MinimalisticFungibleFractionsDO.getAddress(),
+                await MinimalisticERC20FractionDataManagerFactory.getAddress(),
+                ERC1155DataManagerParameters.name,
+                ERC1155DataManagerParameters.symbol,
+            ],
+            log: true,
+            nonce: "pending",
+            waitConfirmations: 1,
+            autoMine: true, // speed up deployment on local network (ganache, hardhat), no effect on live networks
+        });
 
-    console.log(`Contract: ${contractName} deployed at ${result.address}`);
+        console.log(`Contract: ${contractName} deployed at ${result.address}`);
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
 
     return true;
 };
@@ -56,3 +61,4 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 export default func;
 func.id = contractName;
 func.tags = [contractName];
+func.dependencies = ["DataIndex", "MinimalisticFungibleFractionsDO", "MinimalisticERC20FractionDataManagerFactory"];
