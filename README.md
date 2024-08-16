@@ -33,6 +33,10 @@ The Minimalistic Data Index is an implementation of the [ERC-7208](https://eips.
 
 By separating the storage of data from the logic functions that govern it, [ERC-7208](https://eips.ethereum.org/EIPS/eip-7208) allows for more modular and flexible smart contract designs. The Minimalistic Data Index provides a simplified example of how these interfaces can be implemented and used in practice.
 
+**ERC-7208 Diagram**
+
+<img alt="Technical Overview" src=".github/DataIndexDiagram.png" width="693px" />
+
 As example implementation of a Data Manager this repository includes the `MinimalisticERC1155WithERC20FractionsDataManager.sol` contract which is a Data Manager that exposes the ERC1155 functionality where each token ID can be treated as an individual ERC20 token through the use of the `MinimalisticERC20FractionDataManager.sol`.
 
 To be able to do this, the `MinimalisticERC1155WithERC20FractionsDataManager.sol` contract uses the `MinimalisticFungibleFractionsDO.sol` Data Object which stores the necessary information to manage the id, balances and total supply of the tokens.
