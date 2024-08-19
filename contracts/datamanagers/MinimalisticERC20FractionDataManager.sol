@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
@@ -58,36 +58,36 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
 
     /// @dev Initializes the ERC20 Fraction Data Manager
     function initialize(
-        bytes32 _datapoint,
-        address _dataIndex,
-        address _fungibleFractionsDO,
-        address _erc1155dm,
-        uint256 _erc1155ID,
+        bytes32 datapoint_,
+        address dataIndex_,
+        address fungibleFractionsDO_,
+        address erc1155dm_,
+        uint256 erc1155ID_,
         string memory name_,
         string memory symbol_
     ) external initializer {
         __Ownable_init_unchained(_msgSender());
-        __MinimalisticERC20FractionDataManager_init_unchained(_datapoint, _dataIndex, _fungibleFractionsDO, _erc1155dm, _erc1155ID, name_, symbol_);
+        __MinimalisticERC20FractionDataManager_init_unchained(datapoint_, dataIndex_, fungibleFractionsDO_, erc1155dm_, erc1155ID_, name_, symbol_);
     }
 
     function __MinimalisticERC20FractionDataManager_init_unchained(
-        bytes32 _datapoint,
-        address _dataIndex,
-        address _fungibleFractionsDO,
-        address _erc1155dm,
-        uint256 _erc1155ID,
+        bytes32 datapoint_,
+        address dataIndex_,
+        address fungibleFractionsDO_,
+        address erc1155dm_,
+        uint256 erc1155ID_,
         string memory name_,
         string memory symbol_
     ) internal onlyInitializing {
-        if (_datapoint == bytes32(0) || _dataIndex == address(0) || _fungibleFractionsDO == address(0) || _erc1155dm == address(0)) {
+        if (datapoint_ == bytes32(0) || dataIndex_ == address(0) || fungibleFractionsDO_ == address(0) || erc1155dm_ == address(0)) {
             revert WrongParams();
         }
 
-        datapoint = DataPoint.wrap(_datapoint);
-        dataIndex = IDataIndex(_dataIndex);
-        fungibleFractionsDO = IDataObject(_fungibleFractionsDO);
-        erc1155dm = _erc1155dm;
-        erc1155ID = _erc1155ID;
+        datapoint = DataPoint.wrap(datapoint_);
+        dataIndex = IDataIndex(dataIndex_);
+        fungibleFractionsDO = IDataObject(fungibleFractionsDO_);
+        erc1155dm = erc1155dm_;
+        erc1155ID = erc1155ID_;
         _name = name_;
         _symbol = symbol_;
     }
@@ -135,12 +135,12 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
 
     /**
      * @notice Allowance of a spender to spend tokens on behalf of an owner
-     * @param owner The owner of the tokens
+     * @param owner_ The owner of the tokens
      * @param spender The spender of the tokens
      * @return The amount of tokens the spender is allowed to spend
      */
-    function allowance(address owner, address spender) public view returns (uint256) {
-        return _allowances[owner][spender];
+    function allowance(address owner_, address spender) public view returns (uint256) {
+        return _allowances[owner_][spender];
     }
 
     /**
@@ -207,14 +207,14 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
         return true;
     }
 
-    function _spendAllowance(address owner, address spender, uint256 amount) internal {
-        uint256 currentAllowance = _allowances[owner][spender];
+    function _spendAllowance(address owner_, address spender, uint256 amount) internal {
+        uint256 currentAllowance = _allowances[owner_][spender];
         if (currentAllowance != type(uint256).max) {
             if (currentAllowance < amount) {
                 revert ERC20InsufficientAllowance(spender, currentAllowance, amount);
             }
             unchecked {
-                _allowances[owner][spender] = currentAllowance - amount;
+                _allowances[owner_][spender] = currentAllowance - amount;
             }
         }
     }
