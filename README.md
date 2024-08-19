@@ -28,7 +28,7 @@ The Minimalistic Data Index is an implementation of the [ERC-7208](https://eips.
 - **Data Objects (DO):** These are the primary containers for storing information on-chain.
 - **Data Managers (DM):** Smart contracts that access and modify the data stored in Data Objects.
 - **Data Index (DI):** Implementations that manage access to Data Objects.
-- **Data Points (DP):** Structures that abstract the storage of data.
+- **Data Points (DP):** Structures for labeling the storage of data.
 - **Data Point Registries (DPR):** Interfaces that ensure compatibility and enable data portability between different implementations of [ERC-7208](https://eips.ethereum.org/EIPS/eip-7208).
 
 By separating the storage of data from the logic functions that govern it, [ERC-7208](https://eips.ethereum.org/EIPS/eip-7208) allows for more modular and flexible smart contract designs. The Minimalistic Data Index provides a simplified example of how these interfaces can be implemented and used in practice.
