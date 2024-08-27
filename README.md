@@ -1,16 +1,35 @@
 # **Minimalistic Data Index** <!-- omit in toc -->
 
----
 
-- [1. How to Set Up](#🔬-setup)
-- [2. Usage](#🛠-usage)
-- [3. For Devs](#✨-deploying-contracts)
+- [1. What is Minimalistic](#🔬-What-is-Minimalistic)
+- [2. Architecture](#🔬-Architecture)
+- [3. Getting Started](#🔬-Getting-Started)
+- [4. How to Set Up](#✨-How-to-SetUp)
+- [5. Tests](#🛠-Tests)
+- [6. Contributing](#🛠-Contributing)
+- [7. License](#✨-License)
 
-# 🚀 **Data Index**
 
-## Implementing Data Objects under ERC-7208
+## 🔬 **1. What is Minimalistic**
+This repository contains a simple, educational purpose implementation following Onchain Data Index (ERC-7208).
+Please, do not use this example for production, if you want to implement ERC-7208 go to [Contributing](#🛠-Contributing) or contact [EvergonLabs]().
 
-## 🔬 **Setup**
+## 🔬 **2. Architecture**
+
+### 2.1. Naming conventionn
+DP - DataPoint.
+
+DPR - DataPoint Registry.
+
+DI / ODI  - Data Indexer
+
+DM - Data Manager
+
+DO - Data Object
+
+### 2.2. Folder structuer
+
+## ✨ **3. How to Set Up**
 
 ### _This repository requires some familiarity with:_
 
@@ -19,9 +38,8 @@
 - [TypeScript](https://www.typescriptlang.org/)
 - [hardhat](https://hardhat.org/)
 - [ethers.js](https://docs.ethers.io/v5/)
-- [Foundry](https://book.getfoundry.sh)
 
-### 1. Add environments variables
+### 3.1. Add environments variables
 
 - Create a GITHUB_TOKEN on your offical Github Account under `Developer Settings` > `Personal Access Tokens` > `Tokens (classic)`. And generate a token with all permissions except deleting repos.
 - Add it as environment varibale for your local machine:
@@ -30,19 +48,19 @@
 source GITHUB_TOKEN=your_personal_token
 ```
 
-### 2. Install dependencies
+### 3.2. Install dependencies
 
 ```
 yarn & yarn install
 ```
 
-### 3. Build contracts
+### 3.3. Build contracts
 
 ```
 yarn build
 ```
 
-## 4. Tests
+## 🔬 **4. Tests**
 
 For running the tests, you will need to run this command :
 
@@ -86,10 +104,6 @@ yarn lint:ts
 yarn contract-size
 ```
 
-## ✨ **Deploying contracts**
+## 🔬 **5. Contributing**
 
-...TBD...
-
-## ✉️ **Development guidelines**
-
-For best practices and guidelines, read more [here](https://allianceblock.io/).
+## 🔬 **6. License**
