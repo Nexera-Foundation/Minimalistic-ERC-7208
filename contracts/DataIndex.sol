@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IDataIndex} from "./interfaces/IDataIndex.sol";
@@ -91,10 +91,10 @@ contract DataIndex is IDataIndex, AccessControl {
     }
 
     ///@inheritdoc IIDManager
-    function ownerOf(bytes32 _diid) external view returns (uint32, address) {
-        if (_diid & PREFIX_MASK != 0) revert IncorrectIdentifier(_diid); // Require first 12 bytes empty, leaving only 20 bytes of address non-empty
-        address account = address(uint160(uint256(_diid)));
-        if (account == address(0)) revert IncorrectIdentifier(_diid);
+    function ownerOf(bytes32 diid_) external view returns (uint32, address) {
+        if (diid_ & PREFIX_MASK != 0) revert IncorrectIdentifier(diid_); // Require first 12 bytes empty, leaving only 20 bytes of address non-empty
+        address account = address(uint160(uint256(diid_)));
+        if (account == address(0)) revert IncorrectIdentifier(diid_);
         return (ChainidTools.chainid(), account);
     }
 }

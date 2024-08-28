@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Arrays} from "@openzeppelin/contracts/utils/Arrays.sol";
@@ -187,7 +187,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     }
 
     /**
-     * @dev Approve `operator` to operate on all of `owner` tokens
+     * @dev Approve `operator` to operate on all of `tokenOwner` tokens
      *
      * Emits an {ApprovalForAll} event.
      *
@@ -195,12 +195,12 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
      *
      * - `operator` cannot be the zero address.
      */
-    function _setApprovalForAll(address owner, address operator, bool approved) internal virtual {
+    function _setApprovalForAll(address tokenOwner, address operator, bool approved) internal virtual {
         if (operator == address(0)) {
             revert ERC1155InvalidOperator(address(0));
         }
-        _operatorApprovals[owner][operator] = approved;
-        emit ApprovalForAll(owner, operator, approved);
+        _operatorApprovals[tokenOwner][operator] = approved;
+        emit ApprovalForAll(tokenOwner, operator, approved);
     }
 
     /// @inheritdoc IERC1155
