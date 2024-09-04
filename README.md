@@ -52,7 +52,7 @@ Please, do not use this example for production, if you want to implement ERC-720
 
 **DataPoint Registry (DPR):** Defines Access management and DataPoint compatibility.
 
-**Data Indexer: (DI)** Indexes information and approvals.
+**Data Indexer: (DI)** Mediates between Access management and Data Objects.
 
 **Data Manager (DM):** Interface for the user, implements business logic.
 
@@ -62,11 +62,11 @@ Please, do not use this example for production, if you want to implement ERC-720
 
 The Data Index is a smart contract entrusted with access control. It is a gating mechanism for Data Managers to access Data Objects. If a Data Manager intends to access a Data Point (either by read(), write(), or any other method), the Data Index should be used for validating access to the data.
 
-Data Objects are entrusted with the management of transactions that affect the storage of Data Points. Data Objects can receive read(), write(), or any other custom requests from a Data Manager requesting access to a Data Point. As such, Data Objects respond to a gating mechanism given by a single Data Index.
+Data Objects are entrusted with the management of transactions that affect the storage of Data Points. Data Objects can receive read() and write() from a Data Manager requesting access to a Data Point. As such, Data Objects respond to a gating mechanism given by a single Data Index.
 
-Data Points are the low-level structure abstracting information. Data Points are allocated by a Data Point Registry, and this information should be stored within its internal structure. Each Data Point should have a unique identifier provided by the Data Point Registry when instantiated.
+Data Points are the low-level structure abstracting information, in other words, labels for the application's data. Data Points are allocated by a Data Point Registry, and this information should be stored within its internal structure. Each Data Point should have a unique identifier provided by the Data Point Registry when instantiated.
 
-Data Managers are independent smart contracts that implement the business logic or “high-level” data management. They can either read() from a Data Object address and write() through a Data Index Implementation managing the delegated storage of the Data Points. Data Managers can include desired interfaces in order to follow a standard (ERC20, ERC721, ERC1155, ERC3643, etc.) .
+Data Managers are independent smart contracts that implement the business logic or “high-level” data management. They can either read() from a Data Object address and write() via a Data Index Implementation managing the delegated storage of the Data Points. Data Managers can include desired interfaces in order to follow a standard (ERC20, ERC721, ERC1155, ERC3643, etc.) .
 
 ### **Simplified diagram**
 
