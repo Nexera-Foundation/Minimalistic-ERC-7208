@@ -186,7 +186,7 @@ export default async function suite(): Promise<void> {
             expect(await MinimalisticERC20FractionDataManager.allowance(user1.address, user2.address)).to.equal(500);
         });
 
-        it("should transfer fractions and update balanceOf", async function () {
+        it("should transferFrom fractions and update balanceOf", async function () {
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
 
             const erc20DM = await MinimalisticERC1155WithERC20FractionsDataManager.fractionManagersById(1);
@@ -205,7 +205,7 @@ export default async function suite(): Promise<void> {
             expect(await MinimalisticERC20FractionDataManager.totalSupply()).to.equal(1000);
         });
 
-        it("should transfer fractions and update balanceOf (approve user2 to transfer)", async function () {
+        it("should transferFrom fractions and update balanceOf (approve user2 to transfer)", async function () {
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
 
             const erc20DM = await MinimalisticERC1155WithERC20FractionsDataManager.fractionManagersById(1);
@@ -224,6 +224,23 @@ export default async function suite(): Promise<void> {
             expect(await MinimalisticERC20FractionDataManager.totalSupply()).to.equal(1000);
 
             expect(await MinimalisticERC20FractionDataManager.allowance(user1.address, user2.address)).to.equal(0);
+        });
+
+        it("should transfer fractions and update balanceOf", async function () {
+            await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
+
+            const erc20DM = await MinimalisticERC1155WithERC20FractionsDataManager.fractionManagersById(1);
+
+            const MinimalisticERC20FractionDataManager = await ethers.getContractAt("MinimalisticERC20FractionDataManager", erc20DM);
+
+            await expect(MinimalisticERC20FractionDataManager.connect(user1).transfer(user2.address, 500))
+                .to.emit(MinimalisticERC20FractionDataManager, "Transfer")
+                .withArgs(user1.address, user2.address, 500);
+
+            expect(await MinimalisticERC20FractionDataManager.balanceOf(user1.address)).to.equal(500);
+            expect(await MinimalisticERC20FractionDataManager.balanceOf(user2.address)).to.equal(500);
+
+            expect(await MinimalisticERC20FractionDataManager.totalSupply()).to.equal(1000);
         });
     });
 }
