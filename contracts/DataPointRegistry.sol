@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import {DataPoints, DataPoint} from "./utils/DataPoints.sol";
 import {IDataPointRegistry} from "./interfaces/IDataPointRegistry.sol";
@@ -20,23 +20,23 @@ contract DataPointRegistry is IDataPointRegistry {
     }
 
     /// @dev Counter for DataPoint allocation
-    uint256 private counter;
+    uint256 private _counter;
 
     /// @dev Access data for each DataPoint
-    mapping(DataPoint => DPAccessData) private accessData;
+    mapping(DataPoint => DPAccessData) private _accessData;
 
     /// @inheritdoc IDataPointRegistry
     function isAdmin(DataPoint dp, address account) public view returns (bool) {
-        return accessData[dp].isAdmin[account];
+        return _accessData[dp].isAdmin[account];
     }
 
     /// @inheritdoc IDataPointRegistry
     function allocate(address owner) external payable returns (DataPoint) {
         if (msg.value > 0) revert NativeCoinDepositIsNotAccepted();
-        uint256 newCounter = ++counter;
+        uint256 newCounter = ++_counter;
         if (newCounter > type(uint32).max) revert CounterOverflow();
         DataPoint dp = DataPoints.encode(address(this), uint32(newCounter));
-        DPAccessData storage dpd = accessData[dp];
+        DPAccessData storage dpd = _accessData[dp];
         dpd.owner = owner;
         dpd.isAdmin[owner] = true;
         emit DataPointAllocated(dp, owner);
@@ -45,7 +45,7 @@ contract DataPointRegistry is IDataPointRegistry {
 
     /// @inheritdoc IDataPointRegistry
     function transferOwnership(DataPoint dp, address newOwner) external {
-        DPAccessData storage dpd = accessData[dp];
+        DPAccessData storage dpd = _accessData[dp];
         address currentOwner = dpd.owner;
         if (msg.sender != currentOwner) revert InvalidDataPointOwner(dp, msg.sender);
         dpd.owner = newOwner;
@@ -54,7 +54,7 @@ contract DataPointRegistry is IDataPointRegistry {
 
     /// @inheritdoc IDataPointRegistry
     function grantAdminRole(DataPoint dp, address account) external returns (bool) {
-        DPAccessData storage dpd = accessData[dp];
+        DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
         if (!isAdmin(dp, account)) {
             dpd.isAdmin[account] = true;
@@ -66,7 +66,7 @@ contract DataPointRegistry is IDataPointRegistry {
 
     /// @inheritdoc IDataPointRegistry
     function revokeAdminRole(DataPoint dp, address account) external returns (bool) {
-        DPAccessData storage dpd = accessData[dp];
+        DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
         if (isAdmin(dp, account)) {
             dpd.isAdmin[account] = false;

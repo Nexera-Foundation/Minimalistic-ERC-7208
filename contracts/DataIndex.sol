@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IDataIndex} from "./interfaces/IDataIndex.sol";
@@ -35,7 +35,7 @@ contract DataIndex is IDataIndex, AccessControl {
     bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000;
 
     /// @dev Mapping of DataPoint to DataManagers allowed to write to this DP (in any DataObject)
-    mapping(DataPoint => mapping(address dm => bool allowed)) dmApprovals;
+    mapping(DataPoint => mapping(address dm => bool allowed)) private _dmApprovals;
 
     /**
      * @notice Restricts access to the function, allowing only DataPoint admins
@@ -54,7 +54,7 @@ contract DataIndex is IDataIndex, AccessControl {
      * @param dp DataPoint to check DataManager approval for
      */
     modifier onlyApprovedDM(DataPoint dp) {
-        bool approved = dmApprovals[dp][msg.sender];
+        bool approved = _dmApprovals[dp][msg.sender];
         if (!approved) revert DataManagerNotApproved(dp, msg.sender);
         _;
     }
@@ -66,12 +66,12 @@ contract DataIndex is IDataIndex, AccessControl {
 
     ///@inheritdoc IDataIndex
     function isApprovedDataManager(DataPoint dp, address dm) external view returns (bool) {
-        return dmApprovals[dp][dm];
+        return _dmApprovals[dp][dm];
     }
 
     ///@inheritdoc IDataIndex
     function allowDataManager(DataPoint dp, address dm, bool approved) external onlyDPOwner(dp) {
-        dmApprovals[dp][dm] = approved;
+        _dmApprovals[dp][dm] = approved;
         emit DataPointDMApprovalChanged(dp, dm, approved);
     }
 

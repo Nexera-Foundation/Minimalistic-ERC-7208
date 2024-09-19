@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
@@ -27,7 +27,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
     uint8 private constant DECIMALS = 0;
 
     /// @dev DataPoint used in the fungibleFractions data object
-    DataPoint internal datapoint;
+    DataPoint internal _datapoint;
 
     /// @dev Fungible Fractions Data Object contract
     IDataObject public fungibleFractionsDO;
@@ -83,7 +83,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
             revert WrongParams();
         }
 
-        datapoint = DataPoint.wrap(datapoint_);
+        _datapoint = DataPoint.wrap(datapoint_);
         dataIndex = IDataIndex(dataIndex_);
         fungibleFractionsDO = IDataObject(fungibleFractionsDO_);
         erc1155dm = erc1155dm_;
@@ -114,7 +114,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
      *      NOTE: This total supply is equal to the amount of fractions of the ERC1155 token with the id `erc1155ID`
      */
     function totalSupply() external view override returns (uint256) {
-        return abi.decode(fungibleFractionsDO.read(datapoint, IFungibleFractionsOperations.totalSupply.selector, abi.encode(erc1155ID)), (uint256));
+        return abi.decode(fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.totalSupply.selector, abi.encode(erc1155ID)), (uint256));
     }
 
     /**
@@ -125,7 +125,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
      *      NOTE: This balance is equal to the amount of fractions of the ERC1155 token with the id `erc1155ID` the account has
      */
     function balanceOf(address account) external view override returns (uint256) {
-        return abi.decode(fungibleFractionsDO.read(datapoint, IFungibleFractionsOperations.balanceOf.selector, abi.encode(account, erc1155ID)), (uint256));
+        return abi.decode(fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.balanceOf.selector, abi.encode(account, erc1155ID)), (uint256));
     }
 
     /// @dev Function only callable by the ERC1155 data manager to notify a fraction transfer
@@ -221,13 +221,13 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
 
     function _writeTransfer(address from, address to, uint256 amount) internal {
         if (from == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, erc1155ID, amount));
+            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, erc1155ID, amount));
         } else if (to == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, erc1155ID, amount));
+            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, erc1155ID, amount));
         } else {
             dataIndex.write(
                 address(fungibleFractionsDO),
-                datapoint,
+                _datapoint,
                 IFungibleFractionsOperations.transferFrom.selector,
                 abi.encode(from, to, erc1155ID, amount)
             );
