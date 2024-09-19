@@ -15,7 +15,7 @@ import {DataPoint} from "../utils/DataPoints.sol";
 /**
  * @title Minimalistic ERC20 Fraction Data Manager
  * @notice Contract for managing ERC20 fractions of an ERC1155 token
- * @dev This contract is used to manage fractions of an MinimalisticERC1155WithERC20FractionsDataManager
+ * @dev This contract is used to manage fractions of a MinimalisticERC1155WithERC20FractionsDataManager
  *      contract as a ERC20 token, exposing the ERC20 functionalities and emitting the Transfer event.
  *      NOTE: This implementation is minimalistic and does not include minting and burning functionalities.
  */
