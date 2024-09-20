@@ -60,6 +60,9 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     /// @dev Data Index implementation
     IDataIndex public immutable dataIndex;
+    
+    /// @dev ERC20FractionDataManager factory contract
+    MinimalisticERC20FractionDataManagerFactory public immutable erc20FractionsDMFactory;
 
     /// @dev Mapping of approvals state for an address to an operator
     mapping(address account => mapping(address operator => bool)) private _operatorApprovals;
@@ -69,9 +72,6 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     /// @dev Mapping of token ID by ERC20FractionDataManager contract address
     mapping(address erc20dm => uint256 id) public fractionManagersByAddress;
-
-    /// @dev ERC20FractionDataManager factory contract
-    MinimalisticERC20FractionDataManagerFactory public immutable erc20FractionsDMFactory;
 
     /// @notice Modifier to check if the caller is the minter
     modifier onlyMinter() {
