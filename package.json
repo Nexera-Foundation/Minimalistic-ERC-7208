@@ -15,6 +15,9 @@
     "allocateDataPoint": "hardhat run ./scripts/allocateDataPoint.ts",
     "setUpDataManager": "hardhat run ./scripts/setUpDataManager.ts",
     "lint": "prettier --write **.sol && prettier --write tests/**.ts && prettier --write **/tests/**.ts",
+    "lint:contracts": "prettier --write **.sol",
+    "lint:ts": "prettier --write tests/**.ts && prettier --write **/tests/**.ts",
+    "contract-size": "hardhat size-contracts",
     "pr:lint:check:contracts": "prettier --check **.sol",
     "pr:lint:check:tests": "prettier --check tests/**.ts && prettier --check **/tests/**.ts"
   },
