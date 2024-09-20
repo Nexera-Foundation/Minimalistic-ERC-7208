@@ -52,7 +52,7 @@ For more detailed explanation, please visit [Ethereum EIPs](https://eips.ethereu
 ## ⚪️ **2. What brings Minimalistic**
 
 This repository contains a simple, educational-purpose implementation following Onchain Data Index (ERC-7208).
-Please, do not use this example for production, if you want to implement ERC-7208 go to [Contributing](#🤝-Contributing) or contact [EvergonLabs](https://www.evergonlabs.com).
+Please, do not use this example for production, if you want to implement ERC-7208 go to [Contributing](#🤝-Contributing) or contact [Nexera Foundation](https://www.nexera.foundation/).
 
 
 ## 🔬 **3. Architecture**
@@ -183,7 +183,7 @@ yarn setUpDataManager --network <network>
 
 Thank you for your interest in ERC-7208!
 
-Please contact [EvergonLabs](https://www.evergonlabs.com) to integrate all your interactions with the project.
+Please contact [Nexera Foundation](https://www.nexera.foundation/) to integrate all your interactions with the project.
 
 ## 📜 **9. License**
 
