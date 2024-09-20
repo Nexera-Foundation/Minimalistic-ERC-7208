@@ -5,7 +5,7 @@
 ![Build and Test](https://github.com/NexeraProtocol/Minimalistic-Data-Index/actions/workflows/contracts-build-test.yaml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[EIP-7208](https://eips.ethereum.org/EIPS/eip-7208) • [AllianceBlock](https://allianceblock.io) • [Code](https://github.com/NexeraProtocol/Minimalistic-Data-Index/)
+[EIP-7208](https://eips.ethereum.org/EIPS/eip-7208) • [Nexera Foundation](https://www.nexera.foundation/) • [Code](https://github.com/NexeraProtocol/Minimalistic-Data-Index/)
 
 </div>
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Arrays} from "@openzeppelin/contracts/utils/Arrays.sol";
@@ -53,13 +53,16 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     string private _defaultURI = "";
 
     /// @dev DataPoint used in the fungibleFractions data object
-    DataPoint internal immutable datapoint;
+    DataPoint internal immutable _datapoint;
 
     /// @dev Fungible Fractions Data Object contract
     IDataObject public immutable fungibleFractionsDO;
 
     /// @dev Data Index implementation
     IDataIndex public immutable dataIndex;
+
+    /// @dev ERC20FractionDataManager factory contract
+    MinimalisticERC20FractionDataManagerFactory public immutable erc20FractionsDMFactory;
 
     /// @dev Mapping of approvals state for an address to an operator
     mapping(address account => mapping(address operator => bool)) private _operatorApprovals;
@@ -69,9 +72,6 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     /// @dev Mapping of token ID by ERC20FractionDataManager contract address
     mapping(address erc20dm => uint256 id) public fractionManagersByAddress;
-
-    /// @dev ERC20FractionDataManager factory contract
-    MinimalisticERC20FractionDataManagerFactory immutable erc20FractionsDMFactory;
 
     /// @notice Modifier to check if the caller is the minter
     modifier onlyMinter() {
@@ -94,7 +94,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
         _name = name_;
         _symbol = symbol_;
-        datapoint = DataPoint.wrap(_dp);
+        _datapoint = DataPoint.wrap(_dp);
         dataIndex = IDataIndex(_dataIndex);
         fungibleFractionsDO = IDataObject(_fungibleFractionsDO);
         erc20FractionsDMFactory = MinimalisticERC20FractionDataManagerFactory(_erc20FractionsDMFactory);
@@ -116,7 +116,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
      * @dev This function is used to get the total supply of the ERC1155 token considering all token IDs
      */
     function totalSupply() public view returns (uint256) {
-        return abi.decode(fungibleFractionsDO.read(datapoint, IFungibleFractionsOperations.totalSupplyAll.selector, ""), (uint256));
+        return abi.decode(fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.totalSupplyAll.selector, ""), (uint256));
     }
 
     /**
@@ -125,7 +125,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
      * @return The amount of tokens in existence for the given token ID
      */
     function totalSupply(uint256 id) public view returns (uint256) {
-        return abi.decode(fungibleFractionsDO.read(datapoint, IFungibleFractionsOperations.totalSupply.selector, abi.encode(id)), (uint256));
+        return abi.decode(fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.totalSupply.selector, abi.encode(id)), (uint256));
     }
 
     /**
@@ -135,7 +135,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
      * @return The amount of tokens the account has for the given token ID
      */
     function balanceOf(address account, uint256 id) public view returns (uint256) {
-        return abi.decode(fungibleFractionsDO.read(datapoint, IFungibleFractionsOperations.balanceOf.selector, abi.encode(account, id)), (uint256));
+        return abi.decode(fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.balanceOf.selector, abi.encode(account, id)), (uint256));
     }
 
     /**
@@ -147,7 +147,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     function balanceOfBatch(address[] memory accounts, uint256[] memory ids) public view returns (uint256[] memory) {
         return
             abi.decode(
-                fungibleFractionsDO.read(datapoint, IFungibleFractionsOperations.balanceOfBatchAccounts.selector, abi.encode(accounts, ids)),
+                fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.balanceOfBatchAccounts.selector, abi.encode(accounts, ids)),
                 (uint256[])
             );
     }
@@ -422,16 +422,16 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     function _writeTransfer(address from, address to, uint256 id, uint256 value) internal virtual {
         if (from == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, id, value));
+            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, id, value));
         } else if (to == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, id, value));
+            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, id, value));
         } else {
-            dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, id, value));
+            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, id, value));
         }
     }
 
     function _writeTransferBatch(address from, address to, uint256[] memory ids, uint256[] memory values) internal virtual {
-        dataIndex.write(address(fungibleFractionsDO), datapoint, IFungibleFractionsOperations.batchTransferFrom.selector, abi.encode(from, to, ids, values));
+        dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.batchTransferFrom.selector, abi.encode(from, to, ids, values));
     }
 
     /**
@@ -502,7 +502,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         uint256 length = ids.length;
         for (uint256 i; i < length; i++) {
             uint256 id = ids.unsafeMemoryAccess(i);
-            uint256 value = ids.unsafeMemoryAccess(i); // We have an array length check in ERC1155Transfers._safeBatchTransferFrom()
+            uint256 value = values.unsafeMemoryAccess(i); // We have an array length check in ERC1155Transfers._safeBatchTransferFrom()
             _erc20TransferNotify(id, from, to, value);
         }
     }
@@ -530,7 +530,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     function _deployERC20DM(uint256 id, string memory name_, string memory symbol_) private {
         address erc20dm = erc20FractionsDMFactory.deploy(id);
         MinimalisticERC20FractionDataManager(erc20dm).initialize(
-            DataPoint.unwrap(datapoint),
+            DataPoint.unwrap(_datapoint),
             address(dataIndex),
             address(fungibleFractionsDO),
             address(this),
@@ -542,7 +542,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         fractionManagersById[id] = erc20dm;
         fractionManagersByAddress[erc20dm] = id;
 
-        dataIndex.allowDataManager(datapoint, erc20dm, true);
+        dataIndex.allowDataManager(_datapoint, erc20dm, true);
 
         _afterDeployERC20DM(erc20dm);
 

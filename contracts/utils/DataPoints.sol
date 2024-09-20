@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.22;
 
 import {ChainidTools} from "./ChainidTools.sol";
 
@@ -30,11 +30,11 @@ type DataPoint is bytes32;
  * @notice Library with utility functions to encode and decode DataPoint
  */
 library DataPoints {
-    /// @dev represent PPPPVVRR prefix
-    bytes4 internal constant PREFIX = 0x44500000;
-
     /// @dev Error thrown when DataPoint structure is not supported
     error UnsupportedDataPointStructure();
+
+    /// @dev represent PPPPVVRR prefix
+    bytes4 internal constant PREFIX = 0x44500000;
 
     /**
      * @notice Encode DataPoint
