@@ -1,6 +1,6 @@
 <div align="center">
 
-# **Minimalistic Data Index** <!-- omit in toc -->
+# **Minimalistic ODC (ERC-7208) - Example Implementation** <!-- omit in toc -->
 
 ![Build and Test](https://github.com/NexeraProtocol/Minimalistic-Data-Index/actions/workflows/contracts-build-test.yaml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,44 +21,57 @@
 
 ## 🔌 **1. What is ERC-7208**
 
-ERC-7208 is a standard that enhances the compatibility of assets with existing infrastructures and protocols built for Web3.
+[ERC-7208](https://eips.ethereum.org/EIPS/eip-7208) (a.k.a. On-Chain Data Containers) provides a modular interface for managing on-chain data, designed to decouple storage from logic in smart contracts.
 
-In this new ecosystem, the market has made neccesary the creation and evolution of standards which, until now, were created only to cover a specific need and were not necessarily compatible with existing products, dApps, or protocols.
+This separation creates a highly flexible framework where assets can be "wrapped" into **Data Objects** (dedicated storage contracts), and logic is handled through **Data Managers** (interfaces defining behavior).
 
-ERC-7208 aims to be a timeless standard, capable of adapting to market needs, compliance requirements, and emerging standards. By abstracting the logic within the storage, it allows for easy adaptation and interaction with other protocols and dApps.
+This architecture allows for easy adaptation, upgrading, and interoperability across any and all token standards.
 
-This standard, also known as Onchain Data Containers (ODCs), gives developers the possiblity to:
+The core innovation lies in the ability to upgrade business logic independently of the storage layer, offering a robust, future-proof solution that supports tokenization, identity, compliance mechanisms, omnichain operations and much more.
 
-1. **Making assets interoperable**: Issue one asset under an specific standard (f.e. ERC721) and after deployment, if convenient, trade it as an ERC20 token.
 
-2. **Adapting one standard to another**: If you are collecting ERC-721 NFTs and want to make them Rentable (ERC-4907), you would store the NFT in a DataObject and expose it through a DataManager implementing the ERC-4907 interface.
+In other words: This ERC standard enhances the compatibility of tokenizedf assets with existing infrastructures and protocols built for Web3.
 
-3. **Modifying the logic of a particular asset**: If you have a certain RWA and the regulatory framework on your current jurisdiction has changed, you may require an update to the Smart Contract managing such asset.
+The current market encourages innovation and the evolution of standards that were previously designed to address specific needs. These standards were not always compatible with existing products, dApps, or protocols.
+
+[ERC-7208](https://eips.ethereum.org/EIPS/eip-7208) is designed to be a timeless standard, capable of adapting to current market needs, future compliance requirements, and emerging technologies such as new standards. By abstracting the logic within the storage, ODCs encourage an architectural design allowing for easy adaptation and interaction between multiple protocols and dApps.
+
+You should consider using this framework if your on-chain architecture requires:
+
+1. **Making assets interoperable**: For example, by issuing assets under an specific standard (i.e. ERC-721/ERC-1155) and after deployment, enabling trading such assets through a different interface (i.e. ERC-20 token for accessing liquidity).
+
+2. **Adapting one standard to another**: For example, if you are collecting ERC-721 NFTs and want to make them Rentable (ERC-4907).
+
+3. **Modifying the logic of a particular asset**: For example, If your project uses ERC-20 for a certain RWA/security token and the regulatory framework on your current jurisdiction has changed, requiring you to implement embedded compliance rules (such as [Compilot](https://www.compilot.ai/) on-chain Gating mechanism or ERC-3643).
+
+4. **Any use-case where you would benefit from a modular architecture design**: For example, if you are building an ecosystem of smart contracts that are expected to change and require mutability, extensibility or adaptability.
 
 For more detailed explanation, please visit [Ethereum EIPs](https://eips.ethereum.org/EIPS/eip-7208).
+
 
 ## ⚪️ **2. What brings Minimalistic**
 
 This repository contains a simple, educational purpose implementation following Onchain Data Index (ERC-7208).
 Please, do not use this example for production, if you want to implement ERC-7208 go to [Contributing](#🤝-Contributing) or contact [EvergonLabs](https://www.evergonlabs.com).
 
+
 ## 🔬 **3. Architecture**
 
-![ERC-7208 Technical Overview](./assets/erc-7208-technical-overview.svg)
+![ERC-7208 Technical Overview](./img/erc-7208-overview.svg)
 
 ### 3.1. Naming conventions
 
-**DataPoint (DP):** Bytes32 indexed lowl-level data storage.
+* **DataPoint (DP):** Bytes32 indexed lowl-level data storage.
 
-**DataPoint Registry (DPR):** Defines Access management and DataPoint compatibility.
+* **DataPoint Registry (DPR):** Defines Access management and DataPoint compatibility.
 
-**Data Indexer: (DI)** Mediates between Access management and Data Objects.
+* **Data Indexer: (DI)** Mediates between Access management and Data Objects.
 
-**Data Manager (DM):** Interface for the user, implements business logic.
+* **Data Manager (DM):** Interface for the user, implements business logic.
 
-**Data Object (DO)**: Defindes the logic of the data management.
+* **Data Object (DO)**: Defindes the logic of the data management.
 
-### 3.2. Overall explanation
+### 3.2. Overview
 
 The Data Index is a smart contract entrusted with access control. It is a gating mechanism for Data Managers to access Data Objects. If a Data Manager intends to access a Data Point (either by read(), write(), or any other method), the Data Index should be used for validating access to the data.
 
