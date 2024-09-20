@@ -60,7 +60,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     /// @dev Data Index implementation
     IDataIndex public immutable dataIndex;
-    
+
     /// @dev ERC20FractionDataManager factory contract
     MinimalisticERC20FractionDataManagerFactory public immutable erc20FractionsDMFactory;
 
