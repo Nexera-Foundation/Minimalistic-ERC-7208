@@ -502,7 +502,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         uint256 length = ids.length;
         for (uint256 i; i < length; i++) {
             uint256 id = ids.unsafeMemoryAccess(i);
-            uint256 value = ids.unsafeMemoryAccess(i); // We have an array length check in ERC1155Transfers._safeBatchTransferFrom()
+            uint256 value = values.unsafeMemoryAccess(i); // We have an array length check in ERC1155Transfers._safeBatchTransferFrom()
             _erc20TransferNotify(id, from, to, value);
         }
     }
