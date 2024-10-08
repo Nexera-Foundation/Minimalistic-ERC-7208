@@ -30,14 +30,14 @@ type DataPoint is bytes32;
  * @notice Library with utility functions to encode and decode DataPoint
  */
 library DataPoints {
+    /// @dev represents PPPPVVRR prefix
+    bytes4 internal constant PREFIX = 0x44500000;
+
     /// @dev Error thrown when DataPoint structure is not supported
     error UnsupportedDataPointStructure();
 
-    /// @dev represent PPPPVVRR prefix
-    bytes4 internal constant PREFIX = 0x44500000;
-
     /**
-     * @notice Encode DataPoint
+     * @dev Encode DataPoint
      * @param registry Address of the registry which allocated the DataPoint
      * @param id 32 bit implementation-specific id of the DataPoint
      * @return Encoded DataPoint
@@ -50,7 +50,7 @@ library DataPoints {
     }
 
     /**
-     * @notice Decode DataPoint
+     * @dev Decode DataPoint
      * @param dp DataPoint to decode
      * @return chainid Chain ID of the DataPoint
      * @return registry Address of the registry which allocated the DataPoint
