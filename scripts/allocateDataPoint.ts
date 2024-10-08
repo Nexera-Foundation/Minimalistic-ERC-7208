@@ -1,10 +1,10 @@
-import { ethers } from "hardhat";
+import {ethers} from "hardhat";
 
 // command to execute script:
 // npx hardhat run ./scripts/allocateDataPoint.ts --network <network name>
 
 export async function main() {
-    const userAddress = (ethers.Wallet.fromPhrase(process.env.MNEMONIC!).connect(ethers.provider)).address;
+    const userAddress = ethers.Wallet.fromPhrase(process.env.MNEMONIC!).connect(ethers.provider).address;
 
     let DataPointRegistry;
 

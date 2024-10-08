@@ -9,15 +9,15 @@
 
 </div>
 
-- [1. What is ERC-7208](#-1-what-is-ERC-7208)
-- [2. What brings Minimalistic](#-2-what-is-minimalistic)
-- [3. Architecture](#-3-architecture)
-- [4. How to Set Up](#-4-how-to-set-up)
-- [5. Deploying and set up contracts](#-5-deploying-and-set-up-contracts)
-- [6. Tests](#-6-tests)
-- [7. Utility scripts](#-7-utility-scripts)
-- [8. Contributing](#-8-contributing)
-- [9. License](#-9-license)
+-   [1. What is ERC-7208](#-1-what-is-ERC-7208)
+-   [2. What brings Minimalistic](#-2-what-is-minimalistic)
+-   [3. Architecture](#-3-architecture)
+-   [4. How to Set Up](#-4-how-to-set-up)
+-   [5. Deploying and set up contracts](#-5-deploying-and-set-up-contracts)
+-   [6. Tests](#-6-tests)
+-   [7. Utility scripts](#-7-utility-scripts)
+-   [8. Contributing](#-8-contributing)
+-   [9. License](#-9-license)
 
 ## 🔌 **1. What is ERC-7208**
 
@@ -28,7 +28,6 @@ This separation creates a highly flexible framework where assets can be "wrapped
 This architecture allows for easy adaptation, upgrading, and interoperability across any current or future tokenization standards.
 
 The core innovation lies in upgrading business logic independently of the storage layer, offering a robust, future-proof solution that supports tokenization, identity, compliance mechanisms, omnichain operations, and much more.
-
 
 In other words: This standard enhances the compatibility of tokenized assets with existing infrastructures and protocols built for Web3.
 
@@ -48,12 +47,10 @@ You should consider using this framework if your on-chain architecture requires:
 
 For more detailed explanation, please visit [Ethereum EIPs](https://eips.ethereum.org/EIPS/eip-7208).
 
-
 ## ⚪️ **2. What brings Minimalistic**
 
 This repository contains a simple, educational-purpose implementation following Onchain Data Index (ERC-7208).
 Please, do not use this example for production, if you want to implement ERC-7208 go to [Contributing](#🤝-Contributing) or contact [Nexera Foundation](https://www.nexera.foundation/).
-
 
 ## 🔬 **3. Architecture**
 
@@ -61,15 +58,15 @@ Please, do not use this example for production, if you want to implement ERC-720
 
 ### 3.1. Naming conventions
 
-* **DataPoint (DP):** Bytes32 indexed lowl-level data storage.
+-   **DataPoint (DP):** Bytes32 indexed lowl-level data storage.
 
-* **DataPoint Registry (DPR):** Defines Access management and DataPoint compatibility.
+-   **DataPoint Registry (DPR):** Defines Access management and DataPoint compatibility.
 
-* **Data Indexer: (DI)** Mediates between Access management and Data Objects.
+-   **Data Indexer: (DI)** Mediates between Access management and Data Objects.
 
-* **Data Manager (DM):** Interface for the user, implements business logic.
+-   **Data Manager (DM):** Interface for the user, implements business logic.
 
-* **Data Object (DO)**: Defindes the logic of the data management.
+-   **Data Object (DO)**: Defindes the logic of the data management.
 
 ### 3.2. Overview
 
@@ -93,11 +90,11 @@ To be able to do this, the `MinimalisticERC1155WithERC20FractionsDataManager.sol
 
 ### _This repository requires some familiarity with:_
 
-- [Solidity](https://docs.soliditylang.org/en/latest/)
-- [yarn](https://yarnpkg.com/getting-started)
-- [TypeScript](https://www.typescriptlang.org/)
-- [hardhat](https://hardhat.org/)
-- [ethers.js](https://docs.ethers.io/v5/)
+-   [Solidity](https://docs.soliditylang.org/en/latest/)
+-   [yarn](https://yarnpkg.com/getting-started)
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [hardhat](https://hardhat.org/)
+-   [ethers.js](https://docs.ethers.io/v5/)
 
 ### 4.1. Clone the repository
 
@@ -188,4 +185,3 @@ Please contact [Nexera Foundation](https://www.nexera.foundation/) to integrate 
 ## 📜 **9. License**
 
 Note: This component currently has dependencies licensed under the MIT license.
-

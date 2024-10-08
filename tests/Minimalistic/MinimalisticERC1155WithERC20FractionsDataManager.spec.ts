@@ -17,7 +17,7 @@ export default async function suite(): Promise<void> {
         let MinimalisticFungibleFractionsDO: Contract;
 
         let MinimalisticERC20FractionDataManagerFactory: Contract;
-        
+
         let MinimalisticERC1155WithERC20FractionsDataManager: Contract;
 
         let dp: string; // data point
@@ -41,23 +41,28 @@ export default async function suite(): Promise<void> {
 
             // Deploy MinimalisticERC1155WithERC20FractionsDataManager
             const MinimalisticERC1155WithERC20FractionsDataManagerFactory = await ethers.getContractFactory("MinimalisticERC1155WithERC20FractionsDataManager");
-            const MinimalisticERC1155WithERC20FractionsDataManagerAddress = await (await MinimalisticERC1155WithERC20FractionsDataManagerFactory.deploy(
-                dp,
-                await DataIndex.getAddress(),
-                await MinimalisticFungibleFractionsDO.getAddress(),
-                await MinimalisticERC20FractionDataManagerFactory.getAddress(),
-                "TEST",
-                "TEST",
-            )).getAddress();
+            const MinimalisticERC1155WithERC20FractionsDataManagerAddress = await (
+                await MinimalisticERC1155WithERC20FractionsDataManagerFactory.deploy(
+                    dp,
+                    await DataIndex.getAddress(),
+                    await MinimalisticFungibleFractionsDO.getAddress(),
+                    await MinimalisticERC20FractionDataManagerFactory.getAddress(),
+                    "TEST",
+                    "TEST"
+                )
+            ).getAddress();
 
-            MinimalisticERC1155WithERC20FractionsDataManager = await ethers.getContractAt("MinimalisticERC1155WithERC20FractionsDataManager", MinimalisticERC1155WithERC20FractionsDataManagerAddress) as any;
+            MinimalisticERC1155WithERC20FractionsDataManager = (await ethers.getContractAt(
+                "MinimalisticERC1155WithERC20FractionsDataManager",
+                MinimalisticERC1155WithERC20FractionsDataManagerAddress
+            )) as any;
 
             // Allow data manager
             await DataIndex.connect(user1).getFunction("allowDataManager")(dp, MinimalisticERC1155WithERC20FractionsDataManagerAddress, true);
 
             // Transfer ownership
             await DataPointRegistry.connect(user1).getFunction("grantAdminRole")(dp, MinimalisticERC1155WithERC20FractionsDataManagerAddress);
-            
+
             await MinimalisticFungibleFractionsDO.connect(user1).getFunction("setDataIndexImplementation")(dp, await DataIndex.getAddress());
         });
 
@@ -79,17 +84,18 @@ export default async function suite(): Promise<void> {
         });
 
         it("should set approval for all", async function () {
-            await expect(
-                MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).setApprovalForAll(user2.address, true)
-            ).to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "ApprovalForAll").withArgs(user1.address, user2.address, true);
+            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).setApprovalForAll(user2.address, true))
+                .to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "ApprovalForAll")
+                .withArgs(user1.address, user2.address, true);
 
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.isApprovedForAll(user1.address, user2.address)).to.equal(true);
         });
 
         it("revert: only minter (owner) can mint", async function () {
-            await expect(
-                MinimalisticERC1155WithERC20FractionsDataManager.connect(user2).mint(user1.address, 1, 1000, "0x")
-            ).to.be.revertedWithCustomError(MinimalisticERC1155WithERC20FractionsDataManager, "OwnableUnauthorizedAccount");
+            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user2).mint(user1.address, 1, 1000, "0x")).to.be.revertedWithCustomError(
+                MinimalisticERC1155WithERC20FractionsDataManager,
+                "OwnableUnauthorizedAccount"
+            );
         });
 
         it("should mint fractions and update balanceOf and totalSupply", async function () {
@@ -105,8 +111,10 @@ export default async function suite(): Promise<void> {
         it("should burn fractions and update balanceOf and totalSupply", async function () {
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
 
-            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).burn(user1.address, 1, 500))
-                .to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "TransferSingle");
+            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).burn(user1.address, 1, 500)).to.emit(
+                MinimalisticERC1155WithERC20FractionsDataManager,
+                "TransferSingle"
+            );
 
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user1.address, 1)).to.equal(500);
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.getFunction("totalSupply(uint256)")(1)).to.equal(500);
@@ -115,8 +123,10 @@ export default async function suite(): Promise<void> {
         it("should transfer fractions and update balanceOf", async function () {
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
 
-            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).safeTransferFrom(user1.address, user2.address, 1, 750, "0x"))
-                .to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "TransferSingle");
+            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).safeTransferFrom(user1.address, user2.address, 1, 750, "0x")).to.emit(
+                MinimalisticERC1155WithERC20FractionsDataManager,
+                "TransferSingle"
+            );
 
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user1.address, 1)).to.equal(250);
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user2.address, 1)).to.equal(750);
@@ -127,8 +137,10 @@ export default async function suite(): Promise<void> {
 
             await MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).setApprovalForAll(user2.address, true);
 
-            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user2).safeTransferFrom(user1.address, user2.address, 1, 750, "0x"))
-                .to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "TransferSingle");
+            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user2).safeTransferFrom(user1.address, user2.address, 1, 750, "0x")).to.emit(
+                MinimalisticERC1155WithERC20FractionsDataManager,
+                "TransferSingle"
+            );
 
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user1.address, 1)).to.equal(250);
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user2.address, 1)).to.equal(750);
@@ -138,8 +150,9 @@ export default async function suite(): Promise<void> {
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 1, 1000, "0x");
             await MinimalisticERC1155WithERC20FractionsDataManager.mint(user1.address, 2, 500, "0x");
 
-            await expect(MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).safeBatchTransferFrom(user1.address, user2.address, [1, 2], [750, 250], "0x"))
-                .to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "TransferBatch");
+            await expect(
+                MinimalisticERC1155WithERC20FractionsDataManager.connect(user1).safeBatchTransferFrom(user1.address, user2.address, [1, 2], [750, 250], "0x")
+            ).to.emit(MinimalisticERC1155WithERC20FractionsDataManager, "TransferBatch");
 
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user1.address, 1)).to.equal(250);
             expect(await MinimalisticERC1155WithERC20FractionsDataManager.balanceOf(user2.address, 1)).to.equal(750);
