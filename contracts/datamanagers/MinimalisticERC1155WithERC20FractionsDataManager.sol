@@ -29,7 +29,15 @@ import {IFungibleFractionsOperations} from "../interfaces/IFungibleFractionsOper
  *      2. Deploy ERC1155WithERC20FractionsDataManager (or an extending contract)
  *      3. Grant Admin role on the DataPoint to the deployed contract
  */
-contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEventEmitter, IERC1155, IERC1155Errors, IERC1155MetadataURI, ERC165, Ownable, ReentrancyGuard {
+contract MinimalisticERC1155WithERC20FractionsDataManager is
+    IFractionTransferEventEmitter,
+    IERC1155,
+    IERC1155Errors,
+    IERC1155MetadataURI,
+    ERC165,
+    Ownable,
+    ReentrancyGuard
+{
     using Arrays for uint256[];
 
     /// @dev Error thrown when the parameters are wrong
