@@ -13,9 +13,6 @@ const networks: any = {
     allowUnlimitedContractSize: true,
     tags: ["test", "local"],
     saveDeployments: true,
-    accounts: {
-      mnemonic: process.env.MNEMONIC ? process.env.MNEMONIC : "",
-    },
   },
   amoy: {
     live: true,

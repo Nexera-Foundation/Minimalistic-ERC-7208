@@ -2,7 +2,6 @@ node_modules
 .env
 /.yarn
 deployments
-utils/constants.ts
 
 # Hardhat files
 /cache

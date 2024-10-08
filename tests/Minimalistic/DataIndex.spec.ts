@@ -34,19 +34,17 @@ export default async function suite(): Promise<void> {
         });
 
         it("revert: only owner can approve data manager", async function () {
-            await expect(
-                DataIndex.allowDataManager(dp, ethers.ZeroAddress, false)
-            ).to.be.revertedWithCustomError(DataIndex, "InvalidDataPointAdmin");
+            await expect(DataIndex.allowDataManager(dp, ethers.ZeroAddress, false)).to.be.revertedWithCustomError(DataIndex, "InvalidDataPointAdmin");
         });
-        
+
         it("should approve data manager", async function () {
-            await expect(
-                DataIndex.connect(user1).getFunction("allowDataManager")(dp, ethers.ZeroAddress, true)
-            ).emit(DataIndex, "DataPointDMApprovalChanged").withArgs(dp, ethers.ZeroAddress, true);
+            await expect(DataIndex.connect(user1).getFunction("allowDataManager")(dp, ethers.ZeroAddress, true))
+                .emit(DataIndex, "DataPointDMApprovalChanged")
+                .withArgs(dp, ethers.ZeroAddress, true);
 
             expect(await DataIndex.isApprovedDataManager(dp, ethers.ZeroAddress)).to.be.equal(true);
         });
- 
+
         it("revert: wrong diid calling ownerOf", async function () {
             const diid = await DataIndex.diid(user1.address, ethers.ZeroHash);
 
@@ -67,7 +65,7 @@ export default async function suite(): Promise<void> {
             const chainId = data[0];
             const account = data[1];
 
-            const currentChainId =  await network.provider.send('eth_chainId');
+            const currentChainId = await network.provider.send("eth_chainId");
 
             expect(account).to.be.equal(user1.address);
             expect(chainId).to.be.equal(currentChainId);

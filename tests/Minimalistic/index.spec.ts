@@ -7,14 +7,9 @@ import MinimalisticERC1155WithERC20FractionsDataManager from "./MinimalisticERC1
 describe("Minimalistic testing", function () {
     before(async function () {
         // Deploy Contracts
-        await deployments.fixture(
-            [
-                "DataIndex",
-                "DataPointRegistry",
-                "MinimalisticFungibleFractionsDO",
-                "MinimalisticERC20FractionDataManagerFactory",
-            ], {keepExistingDeployments: true}
-        );
+        await deployments.fixture(["DataIndex", "DataPointRegistry", "MinimalisticFungibleFractionsDO", "MinimalisticERC20FractionDataManagerFactory"], {
+            keepExistingDeployments: true,
+        });
 
         this.DataIndex = await ethers.getContract("DataIndex");
         this.DataPointRegistry = await ethers.getContract("DataPointRegistry");
