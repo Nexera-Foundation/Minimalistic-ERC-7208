@@ -10,7 +10,7 @@ import {IDataPointRegistry} from "./interfaces/IDataPointRegistry.sol";
  */
 contract DataPointRegistry is IDataPointRegistry {
     /**
-     * @notice DataPoint access data
+     * @dev DataPoint access data
      * @param owner Owner of the DataPoint
      * @param isAdmin Mapping of isAdmin status for each account
      */
@@ -32,6 +32,7 @@ contract DataPointRegistry is IDataPointRegistry {
 
     /// @inheritdoc IDataPointRegistry
     function allocate(address owner) external payable returns (DataPoint) {
+        if (owner == address(0)) revert InvalidOwnerAddress(owner);
         if (msg.value > 0) revert NativeCoinDepositIsNotAccepted();
         uint256 newCounter = ++_counter;
         if (newCounter > type(uint32).max) revert CounterOverflow();

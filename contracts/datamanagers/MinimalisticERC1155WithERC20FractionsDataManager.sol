@@ -4,6 +4,7 @@ pragma solidity ^0.8.22;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Arrays} from "@openzeppelin/contracts/utils/Arrays.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {ERC165, IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import {IERC1155MetadataURI} from "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol";
@@ -28,7 +29,7 @@ import {IFungibleFractionsOperations} from "../interfaces/IFungibleFractionsOper
  *      2. Deploy ERC1155WithERC20FractionsDataManager (or an extending contract)
  *      3. Grant Admin role on the DataPoint to the deployed contract
  */
-contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEventEmitter, IERC1155, IERC1155Errors, IERC1155MetadataURI, ERC165, Ownable {
+contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEventEmitter, IERC1155, IERC1155Errors, IERC1155MetadataURI, ERC165, Ownable, ReentrancyGuard {
     using Arrays for uint256[];
 
     /// @dev Error thrown when the parameters are wrong
@@ -43,15 +44,6 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
     /// @notice Event emitted when the default URI is set
     event DefaultURISet(string defaultURI);
 
-    /// @dev Name of the ERC1155 token
-    string private _name;
-
-    /// @dev Symbol of the ERC1155 token
-    string private _symbol;
-
-    /// @dev Default URI for token types
-    string private _defaultURI = "";
-
     /// @dev DataPoint used in the fungibleFractions data object
     DataPoint internal immutable _datapoint;
 
@@ -63,6 +55,15 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
 
     /// @dev ERC20FractionDataManager factory contract
     MinimalisticERC20FractionDataManagerFactory public immutable erc20FractionsDMFactory;
+
+    /// @dev Name of the ERC1155 token
+    string private _name;
+
+    /// @dev Symbol of the ERC1155 token
+    string private _symbol;
+
+    /// @dev Default URI for token types
+    string private _defaultURI = "";
 
     /// @dev Mapping of approvals state for an address to an operator
     mapping(address account => mapping(address operator => bool)) private _operatorApprovals;
@@ -527,7 +528,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is IFractionTransferEv
         return (name_, symbol_);
     }
 
-    function _deployERC20DM(uint256 id, string memory name_, string memory symbol_) private {
+    function _deployERC20DM(uint256 id, string memory name_, string memory symbol_) private nonReentrant {
         address erc20dm = erc20FractionsDMFactory.deploy(id);
         MinimalisticERC20FractionDataManager(erc20dm).initialize(
             DataPoint.unwrap(_datapoint),
