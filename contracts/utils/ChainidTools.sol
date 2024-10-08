@@ -14,7 +14,7 @@ library ChainidTools {
     error UnexpectedChain(uint32 expected, uint32 requested);
 
     /**
-     * @notice Converts block.chainid to uint32 chainid
+     * @dev Converts block.chainid to uint32 chainid
      * @return uint32 chainid
      */
     function chainid() internal view returns (uint32) {
@@ -25,7 +25,7 @@ library ChainidTools {
     }
 
     /**
-     * @notice Requires current chain to be the same as requested
+     * @dev Requires current chain to be the same as requested
      * @param chainId Requested chain ID
      */
     function requireCurrentChain(uint32 chainId) internal view {

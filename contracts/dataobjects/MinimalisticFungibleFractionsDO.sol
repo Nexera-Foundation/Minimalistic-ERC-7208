@@ -78,6 +78,12 @@ contract MinimalisticFungibleFractionsDO is IDataObject {
     error ArrayLengthMismatch();
 
     /**
+     * @dev Error thrown when id couldn't be removed.
+     * @param id The id of the token
+     **/
+    error DiidIdNotFound(uint256 id);
+
+    /**
      * @notice Event emitted when the DataIndex implementation is set
      * @param dp The DataPoint identifier
      * @param dataIndexImplementation The DataIndex implementation address
@@ -304,7 +310,7 @@ contract MinimalisticFungibleFractionsDO is IDataObject {
         }
         diidd.balances[id] = diidBalance;
         if (diidBalance == 0) {
-            diidd.ids.remove(id);
+            if (!diidd.ids.remove(id)) revert DiidIdNotFound(id);
         }
     }
 

@@ -20,11 +20,14 @@ import {DataPoint} from "../utils/DataPoints.sol";
  *      NOTE: This implementation is minimalistic and does not include minting and burning functionalities.
  */
 contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransferEventEmitter, IERC20, IERC20Metadata, IERC20Errors, OwnableUpgradeable {
+    /// @dev Decimals for the ERC20 token (set to 0)
+    uint8 private constant DECIMALS = 0;
+
     /// @dev Error thrown when one or more parameters are wrong
     error WrongParams();
 
-    /// @dev Decimals for the ERC20 token (set to 0)
-    uint8 private constant DECIMALS = 0;
+    /// @dev Error thrown when the contract is not initialized
+    error ContractNotInitialized();
 
     /// @dev DataPoint used in the fungibleFractions data object
     DataPoint internal _datapoint;
@@ -114,6 +117,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
      *      NOTE: This total supply is equal to the amount of fractions of the ERC1155 token with the id `erc1155ID`
      */
     function totalSupply() external view override returns (uint256) {
+        if (address(fungibleFractionsDO) == address(0)) revert ContractNotInitialized();
         return abi.decode(fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.totalSupply.selector, abi.encode(erc1155ID)), (uint256));
     }
 
@@ -125,6 +129,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
      *      NOTE: This balance is equal to the amount of fractions of the ERC1155 token with the id `erc1155ID` the account has
      */
     function balanceOf(address account) external view override returns (uint256) {
+        if (address(fungibleFractionsDO) == address(0)) revert ContractNotInitialized();
         return abi.decode(fungibleFractionsDO.read(_datapoint, IFungibleFractionsOperations.balanceOf.selector, abi.encode(account, erc1155ID)), (uint256));
     }
 
@@ -220,6 +225,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
     }
 
     function _writeTransfer(address from, address to, uint256 amount) internal {
+        if (address(dataIndex) == address(0)) revert ContractNotInitialized();
         if (from == address(0)) {
             dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, erc1155ID, amount));
         } else if (to == address(0)) {

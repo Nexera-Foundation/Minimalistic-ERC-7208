@@ -14,6 +14,9 @@ import {DataPoints, DataPoint} from "./utils/DataPoints.sol";
  * @notice Minimalistic implementation of a Data Index contract
  */
 contract DataIndex is IDataIndex, AccessControl {
+    /// @dev Mask to get the prefix (first 12 bytes) of the diid
+    bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000;
+
     /// @dev Error thrown when the sender is not an admin of the DataPoint
     error InvalidDataPointAdmin(DataPoint dp, address sender);
 
@@ -30,9 +33,6 @@ contract DataIndex is IDataIndex, AccessControl {
      * @param approved if DataManager is approved
      */
     event DataPointDMApprovalChanged(DataPoint dp, address dm, bool approved);
-
-    /// @dev Mask to get the prefis (first 12 bytes) of the diid
-    bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000;
 
     /// @dev Mapping of DataPoint to DataManagers allowed to write to this DP (in any DataObject)
     mapping(DataPoint => mapping(address dm => bool allowed)) private _dmApprovals;
