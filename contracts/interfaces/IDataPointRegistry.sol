@@ -37,6 +37,12 @@ interface IDataPointRegistry {
      */
     event DataPointAdminRevoked(DataPoint indexed dp, address account);
 
+    /**
+     * @dev Error thrown when address passed is not a valid address
+     * @param owner Invalid owner
+     */
+    error InvalidOwnerAddress(address owner);
+
     /// @dev Error thrown when DataPoint allocation counter overflows
     error CounterOverflow();
 
