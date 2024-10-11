@@ -31,7 +31,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         return false;
     }
 
-    try{
+    try {
         const result = await deploy(contractName, {
             contract: contractName,
             from: deployer,

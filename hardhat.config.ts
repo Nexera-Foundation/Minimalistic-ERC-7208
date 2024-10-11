@@ -22,7 +22,7 @@ const config: HardhatUserConfig = {
           optimizer: {
             enabled: true,
           },
-          viaIR: true
+          viaIR: true,
         },
       },
     ],
@@ -33,10 +33,6 @@ const config: HardhatUserConfig = {
     admin: 1,
     minter: 2,
     user: 3,
-  },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
   },
   typechain: {
     alwaysGenerateOverloads: true,
@@ -52,7 +48,7 @@ const config: HardhatUserConfig = {
     // Uncomment when forking live networks
     //timeout: 100000000,
     parallel: true, // Reduce running time for testing multiple future use-cases
-  }
+  },
 };
 
 export default config;

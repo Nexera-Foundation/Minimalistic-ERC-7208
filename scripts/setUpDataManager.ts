@@ -1,5 +1,5 @@
-import { ethers } from "hardhat";
-import { ERC1155DataManagerParameters } from "../utils/constants";
+import {ethers} from "hardhat";
+import {ERC1155DataManagerParameters} from "../utils/constants";
 
 // command to execute script:
 // npx hardhat run ./scripts/setUpDataManager.ts --network <network name>
@@ -7,7 +7,7 @@ import { ERC1155DataManagerParameters } from "../utils/constants";
 export async function main() {
     const dp = ERC1155DataManagerParameters.datapoint;
 
-    if(!dp) {
+    if (!dp) {
         console.error("Data point not set");
         return false;
     }

@@ -2,14 +2,14 @@
 import {expect} from "chai";
 import {ethers} from "hardhat";
 import {SignerWithAddress} from "@nomicfoundation/hardhat-ethers/signers";
-import { DataPointRegistry } from "../../typechain";
+import {DataPointRegistry} from "../../typechain";
 
 export default async function suite(): Promise<void> {
     describe("DataPointRegistry", () => {
         let snap: string;
 
         let deployer: SignerWithAddress, user1: SignerWithAddress, user2: SignerWithAddress;
-        
+
         let DataPointRegistry: DataPointRegistry;
 
         before(async function () {
@@ -32,7 +32,10 @@ export default async function suite(): Promise<void> {
         });
 
         it("revert: NativeCoinDepositIsNotAccepted", async () => {
-            await expect(DataPointRegistry.allocate(user1.address, {value: 1})).to.be.revertedWithCustomError(DataPointRegistry, "NativeCoinDepositIsNotAccepted");
+            await expect(DataPointRegistry.allocate(user1.address, {value: 1})).to.be.revertedWithCustomError(
+                DataPointRegistry,
+                "NativeCoinDepositIsNotAccepted"
+            );
         });
 
         it("Owner of DataPoint should be its Admin by default", async () => {
@@ -60,7 +63,10 @@ export default async function suite(): Promise<void> {
             const dp = await DataPointRegistry.allocate.staticCall(user1.address);
             await expect(DataPointRegistry.allocate(user1.address)).to.emit(DataPointRegistry, "DataPointAllocated");
 
-            await expect(DataPointRegistry.connect(user2).transferOwnership(dp, user2.address)).to.be.revertedWithCustomError(DataPointRegistry, "InvalidDataPointOwner");
+            await expect(DataPointRegistry.connect(user2).transferOwnership(dp, user2.address)).to.be.revertedWithCustomError(
+                DataPointRegistry,
+                "InvalidDataPointOwner"
+            );
         });
 
         it("Should grant admin role", async () => {
@@ -83,7 +89,10 @@ export default async function suite(): Promise<void> {
             const dp = await DataPointRegistry.allocate.staticCall(user1.address);
             await expect(DataPointRegistry.allocate(user1.address)).to.emit(DataPointRegistry, "DataPointAllocated");
 
-            await expect(DataPointRegistry.connect(user2).grantAdminRole(dp, user2.address)).to.be.revertedWithCustomError(DataPointRegistry, "InvalidDataPointOwner");
+            await expect(DataPointRegistry.connect(user2).grantAdminRole(dp, user2.address)).to.be.revertedWithCustomError(
+                DataPointRegistry,
+                "InvalidDataPointOwner"
+            );
         });
 
         it("Should revoke admin role", async () => {
@@ -112,7 +121,10 @@ export default async function suite(): Promise<void> {
 
             await expect(DataPointRegistry.connect(user1).grantAdminRole(dp, user2.address)).to.emit(DataPointRegistry, "DataPointAdminGranted");
 
-            await expect(DataPointRegistry.connect(user2).revokeAdminRole(dp, user2.address)).to.be.revertedWithCustomError(DataPointRegistry, "InvalidDataPointOwner");
+            await expect(DataPointRegistry.connect(user2).revokeAdminRole(dp, user2.address)).to.be.revertedWithCustomError(
+                DataPointRegistry,
+                "InvalidDataPointOwner"
+            );
         });
     });
 }
