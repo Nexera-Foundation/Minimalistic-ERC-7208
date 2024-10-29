@@ -5,7 +5,7 @@
 ![Build and Test](https://github.com/NexeraProtocol/Minimalistic-Data-Index/actions/workflows/contracts-build-test.yaml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[EIP-7208](https://eips.ethereum.org/EIPS/eip-7208) • [Nexera Foundation](https://www.nexera.foundation/) • [Code](https://github.com/NexeraProtocol/Minimalistic-Data-Index/)
+[EIP-7208](https://eips.ethereum.org/EIPS/eip-7208) • [Nexera Network](https://www.https://www.nexera.network/) • [Documentation](https://docs.nexera.network/nexera-standard/overview) • [Code](https://github.com/Nexera-Foundation/Minimalistic-ERC-7208/)
 
 </div>
 
@@ -50,7 +50,7 @@ For more detailed explanation, please visit [Ethereum EIPs](https://eips.ethereu
 ## ⚪️ **2. What brings Minimalistic**
 
 This repository contains a simple, educational-purpose implementation following Onchain Data Index (ERC-7208).
-Please, do not use this example for production, if you want to implement ERC-7208 go to [Contributing](#🤝-Contributing) or contact [Nexera Foundation](https://www.nexera.foundation/).
+Please, do not use this example for production, if you want to implement ERC-7208 go to [Contributing](#🤝-Contributing) or contact [Nexera](https://www.nexera.network/).
 
 ## 🔬 **3. Architecture**
 
@@ -180,7 +180,7 @@ yarn setUpDataManager --network <network>
 
 Thank you for your interest in ERC-7208!
 
-Please contact [Nexera Foundation](https://www.nexera.foundation/) to integrate all your interactions with the project.
+Please contact [Nexera](https://www.nexera.network/) to integrate all your interactions with the project.
 
 ## 📜 **9. License**
 
