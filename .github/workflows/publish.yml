@@ -1,0 +1,53 @@
+name: Publish package to GitHub Packages
+on:
+  push:
+    branches:
+      - development
+      - staging
+      - main
+    paths-ignore:
+      - 'package.json'
+      - 'package-lock.json'
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NEXERA_BOT_ACCESS_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: "${{ secrets.NEXERA_BOT_ACCESS_TOKEN }}"
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          registry-url: 'https://npm.pkg.github.com'
+          token: ${{ secrets.NEXERA_BOT_ACCESS_TOKEN }}
+
+      - name: yarn install --check-cache
+        run: yarn install --check-cache
+        env:
+          GITHUB_TOKEN: ${{ secrets.NEXERA_BOT_ACCESS_TOKEN }}
+
+      - name: Publish Image for development
+        if: github.ref == 'refs/heads/development'
+        run: npm publish --tag dev
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Image for staging
+        if: github.ref == 'refs/heads/staging'
+        run: npm publish --tag stage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Image for main
+        if: github.ref == 'refs/heads/main'
+        run: npm publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

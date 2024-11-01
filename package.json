@@ -1,9 +1,12 @@
 {
-    "name": "minimalistic-data-index",
+    "name": "@nexera-foundation/minimalistic-erc-7208",
     "version": "1.0.0",
     "description": "Data Index (ERC-7208) minimalistic implementation",
     "main": "index.js",
-    "repository": "https://github.com/NexeraProtocol/Minimalistic-Data-Index.git",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Nexera-Foundation/Minimalistic-ERC-7208.git"
+    },
     "author": "Nexera <contact@nexeraprotocol.com>",
     "license": "MIT",
     "scripts": {
@@ -22,6 +25,9 @@
         "contract-size": "hardhat size-contracts",
         "pr:lint:check:contracts": "prettier --check **.sol",
         "pr:lint:check:tests": "prettier --check tests/**.ts && prettier --check **/tests/**.ts"
+    },
+        "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
     },
     "devDependencies": {
         "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
