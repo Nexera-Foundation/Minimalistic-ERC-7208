@@ -57,7 +57,7 @@ contract DataPointRegistry is IDataPointRegistry {
     function grantAdminRole(DataPoint dp, address account) external returns (bool) {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
-        if (!isAdmin(dp, account)) {
+        if (!dpd.isAdmin[account]) {
             dpd.isAdmin[account] = true;
             emit DataPointAdminGranted(dp, account);
             return true;
@@ -69,7 +69,7 @@ contract DataPointRegistry is IDataPointRegistry {
     function revokeAdminRole(DataPoint dp, address account) external returns (bool) {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
-        if (isAdmin(dp, account)) {
+        if (dpd.isAdmin[account]) {
             dpd.isAdmin[account] = false;
             emit DataPointAdminRevoked(dp, account);
             return true;
