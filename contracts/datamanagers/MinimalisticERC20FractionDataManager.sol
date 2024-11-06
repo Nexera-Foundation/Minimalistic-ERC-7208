@@ -231,12 +231,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
         } else if (to == address(0)) {
             dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, erc1155ID, amount));
         } else {
-            dataIndex.write(
-                fungibleFractionsDO,
-                _datapoint,
-                IFungibleFractionsOperations.transferFrom.selector,
-                abi.encode(from, to, erc1155ID, amount)
-            );
+            dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, erc1155ID, amount));
         }
         IFractionTransferEventEmitter(erc1155dm).fractionTransferredNotify(from, to, amount);
     }
