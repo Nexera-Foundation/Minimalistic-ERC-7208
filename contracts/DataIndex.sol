@@ -15,7 +15,7 @@ import {DataPoints, DataPoint} from "./utils/DataPoints.sol";
  */
 contract DataIndex is IDataIndex, AccessControl {
     /// @dev Mask to get the prefix (first 12 bytes) of the diid
-    bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000;
+    bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000000000000000000000;
 
     /// @dev Error thrown when the sender is not an admin of the DataPoint
     error InvalidDataPointAdmin(DataPoint dp, address sender);
