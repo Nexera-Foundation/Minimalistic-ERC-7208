@@ -40,7 +40,7 @@ contract DataPointRegistry is IDataPointRegistry {
             newCounter = ++_counter;
         }
 
-        if (newCounter > type(uint32).max) revert CounterOverflow(); 
+        if (newCounter > type(uint32).max) revert CounterOverflow();
         DataPoint dp = DataPoints.encode(address(this), uint32(newCounter));
         DPAccessData storage dpd = _accessData[dp];
         dpd.owner = owner;
