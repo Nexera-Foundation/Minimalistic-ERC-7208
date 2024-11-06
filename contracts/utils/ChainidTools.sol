@@ -18,7 +18,7 @@ library ChainidTools {
      * @return uint32 chainid
      */
     function chainid() internal view returns (uint32) {
-        if (block.chainid < type(uint32).max) {
+        if (block.chainid <= type(uint32).max) {
             return uint32(block.chainid);
         }
         revert UnsupportedChain(block.chainid);
