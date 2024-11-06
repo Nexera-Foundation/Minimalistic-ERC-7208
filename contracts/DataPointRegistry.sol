@@ -34,8 +34,13 @@ contract DataPointRegistry is IDataPointRegistry {
     function allocate(address owner) external payable returns (DataPoint) {
         if (owner == address(0)) revert InvalidOwnerAddress(owner);
         if (msg.value > 0) revert NativeCoinDepositIsNotAccepted();
-        uint256 newCounter = ++_counter;
-        if (newCounter > type(uint32).max) revert CounterOverflow();
+
+        uint256 newCounter;
+        unchecked {
+            newCounter = ++_counter;
+        }
+
+        if (newCounter > type(uint32).max) revert CounterOverflow(); 
         DataPoint dp = DataPoints.encode(address(this), uint32(newCounter));
         DPAccessData storage dpd = _accessData[dp];
         dpd.owner = owner;
