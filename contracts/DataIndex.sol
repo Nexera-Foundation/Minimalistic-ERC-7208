@@ -76,13 +76,13 @@ contract DataIndex is IDataIndex, AccessControl {
     }
 
     ///@inheritdoc IDataIndex
-    function read(address dobj, DataPoint dp, bytes4 operation, bytes calldata data) external view returns (bytes memory) {
-        return IDataObject(dobj).read(dp, operation, data);
+    function read(IDataObject dobj, DataPoint dp, bytes4 operation, bytes calldata data) external view returns (bytes memory) {
+        return dobj.read(dp, operation, data);
     }
 
     ///@inheritdoc IDataIndex
-    function write(address dobj, DataPoint dp, bytes4 operation, bytes calldata data) external onlyApprovedDM(dp) returns (bytes memory) {
-        return IDataObject(dobj).write(dp, operation, data);
+    function write(IDataObject dobj, DataPoint dp, bytes4 operation, bytes calldata data) external onlyApprovedDM(dp) returns (bytes memory) {
+        return dobj.write(dp, operation, data);
     }
 
     ///@inheritdoc IIDManager
