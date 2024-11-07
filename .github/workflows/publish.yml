@@ -18,13 +18,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Authenticate npm with GitHub Packages
-        run: |
-          cat <<-EOF > ~/.npmrc
-          //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-          @nexera-foundation:registry=https://npm.pkg.github.com
-          always-auth=true
-          EOF
+#      - name: Authenticate npm with GitHub Packages
+#        run: |
+#          cat <<-EOF > ~/.npmrc
+#         //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+#          @nexera-foundation:registry=https://npm.pkg.github.com
+#          always-auth=true
+#          EOF
 
       - uses: actions/setup-node@v3
         with:
