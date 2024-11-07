@@ -8,6 +8,8 @@ on:
     paths-ignore:
       - 'package.json'
       - 'package-lock.json'
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.PAT }}
 
 jobs:
   build:
