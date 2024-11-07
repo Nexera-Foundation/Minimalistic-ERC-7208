@@ -224,24 +224,15 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
         }
     }
 
-    /**
-     * @dev Mint and burn functions are not implemented in this contract but this function contains the logic for
-     *      easy integration of these functionalities
-     */
     function _writeTransfer(address from, address to, uint256 amount) internal {
         if (address(dataIndex) == address(0)) revert ContractNotInitialized();
-        if (from == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, erc1155ID, amount));
-        } else if (to == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, erc1155ID, amount));
-        } else {
-            dataIndex.write(
-                address(fungibleFractionsDO),
-                _datapoint,
-                IFungibleFractionsOperations.transferFrom.selector,
-                abi.encode(from, to, erc1155ID, amount)
-            );
-        }
+
+        // In this contract `_writeTransfer()` can not be called with zero `from` or `to` arguments, but if it is changed to allow mint/burn, this is how this operations should be called:
+        // dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, erc1155ID, amount));
+        // dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, erc1155ID, amount));
+
+        dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, erc1155ID, amount));
+
         IFractionTransferEventEmitter(erc1155dm).fractionTransferredNotify(from, to, amount);
     }
 
