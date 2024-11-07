@@ -18,6 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Authenticate npm with GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT }}" > ~/.npmrc
+      - run: echo "@nexera-foundation:registry=https://npm.pkg.github.com" >> ~/.npmrc
+
       - uses: actions/setup-node@v3
         with:
           node-version: 'latest'
@@ -25,10 +29,6 @@ jobs:
 
       - name: yarn install --check-cache
         run: yarn install --check-cache
-
-      - name: Authenticate npm with GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT }}" > ~/.npmrc
-      - run: echo "@nexera-foundation:registry=https://npm.pkg.github.com" >> ~/.npmrc
 
       - name: Publish Image for development
         if: github.ref == 'refs/heads/development'
