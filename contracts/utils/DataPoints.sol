@@ -33,10 +33,14 @@ library DataPoints {
     /// @dev Represents PPPPVVRR prefix
     bytes4 internal constant PREFIX = 0x44500000;
 
-    /// @dev Represents literal values
-    uint256 internal constant LITERAL_224 = 224;
-    uint256 internal constant LITERAL_192 = 192;
-    uint256 internal constant LITERAL_160 = 160;
+    /// @dev Offset of the DataPoint prefix
+    uint256 internal constant PREFIX_BIT_OFFSET = 224;
+
+    /// @dev Offset of the DataPoint id
+    uint256 internal constant ID_BIT_OFFSET = 192;
+
+    /// @dev Offset of the DataPoint chainid
+    uint256 internal constant CHAINID_BIT_OFFSET = 160;
 
     /// @dev Error thrown when DataPoint structure is not supported
     error UnsupportedDataPointStructure();
@@ -51,9 +55,9 @@ library DataPoints {
         return
             DataPoint.wrap(
                 bytes32(
-                    (uint256(uint32(PREFIX)) << LITERAL_224) |
-                        (uint256(id) << LITERAL_192) |
-                        (uint256(ChainidTools.chainid()) << LITERAL_160) |
+                    (uint256(uint32(PREFIX)) << PREFIX_BIT_OFFSET) |
+                        (uint256(id) << ID_BIT_OFFSET) |
+                        (uint256(ChainidTools.chainid()) << CHAINID_BIT_OFFSET) |
                         uint256(uint160(registry))
                 )
             );
@@ -68,10 +72,10 @@ library DataPoints {
      */
     function decode(DataPoint dp) internal pure returns (uint32 chainid, address registry, uint32 id) {
         uint256 dpu = uint256(DataPoint.unwrap(dp));
-        bytes4 prefix = bytes4(uint32(dpu >> LITERAL_224));
+        bytes4 prefix = bytes4(uint32(dpu >> PREFIX_BIT_OFFSET));
         if (prefix != PREFIX) revert UnsupportedDataPointStructure();
         registry = address(uint160(dpu));
-        chainid = uint32(dpu >> LITERAL_160);
-        id = uint32(dpu >> LITERAL_192);
+        chainid = uint32(dpu >> CHAINID_BIT_OFFSET);
+        id = uint32(dpu >> ID_BIT_OFFSET);
     }
 }
