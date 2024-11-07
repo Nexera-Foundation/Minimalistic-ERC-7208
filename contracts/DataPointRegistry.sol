@@ -3,20 +3,23 @@ pragma solidity ^0.8.22;
 
 import {DataPoints, DataPoint} from "./utils/DataPoints.sol";
 import {IDataPointRegistry} from "./interfaces/IDataPointRegistry.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 /**
  * @title DataPointRegistry contract
  * @notice Contract for managing the creation, transfer and access control of DataPoints
  */
 contract DataPointRegistry is IDataPointRegistry {
+    using EnumerableSet for EnumerableSet.AddressSet;
+
     /**
      * @dev DataPoint access data
      * @param owner Owner of the DataPoint
-     * @param isAdmin Mapping of isAdmin status for each account
+     * @param admins Mapping of admins for the DataPoint
      */
     struct DPAccessData {
         address owner;
-        mapping(address => bool) isAdmin;
+        EnumerableSet.AddressSet admins;
     }
 
     /// @dev Counter for DataPoint allocation
@@ -27,7 +30,7 @@ contract DataPointRegistry is IDataPointRegistry {
 
     /// @inheritdoc IDataPointRegistry
     function isAdmin(DataPoint dp, address account) public view returns (bool) {
-        return _accessData[dp].isAdmin[account];
+        return _accessData[dp].admins.contains(account);
     }
 
     /// @inheritdoc IDataPointRegistry
@@ -39,7 +42,7 @@ contract DataPointRegistry is IDataPointRegistry {
         DataPoint dp = DataPoints.encode(address(this), uint32(newCounter));
         DPAccessData storage dpd = _accessData[dp];
         dpd.owner = owner;
-        dpd.isAdmin[owner] = true;
+        dpd.admins.add(owner);
         emit DataPointAllocated(dp, owner);
         return dp;
     }
@@ -50,6 +53,8 @@ contract DataPointRegistry is IDataPointRegistry {
         address currentOwner = dpd.owner;
         if (msg.sender != currentOwner) revert InvalidDataPointOwner(dp, msg.sender);
         dpd.owner = newOwner;
+        _cleanAdmins(dpd.admins);
+        dpd.admins.add(newOwner);
         emit DataPointOwnershipTransferred(dp, currentOwner, newOwner);
     }
 
@@ -58,7 +63,7 @@ contract DataPointRegistry is IDataPointRegistry {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
         if (!isAdmin(dp, account)) {
-            dpd.isAdmin[account] = true;
+            dpd.admins.add(account);
             emit DataPointAdminGranted(dp, account);
             return true;
         }
@@ -70,10 +75,18 @@ contract DataPointRegistry is IDataPointRegistry {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
         if (isAdmin(dp, account)) {
-            dpd.isAdmin[account] = false;
+            dpd.admins.remove(account);
             emit DataPointAdminRevoked(dp, account);
             return true;
         }
         return false;
+    }
+
+    function _cleanAdmins(EnumerableSet.AddressSet storage admins) private {
+        uint256 length = admins.length();
+        address[] memory accounts = admins.values();
+        for (uint256 i = 0; i < length; i++) {
+            admins.remove(accounts[i]);
+        }
     }
 }
