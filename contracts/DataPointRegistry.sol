@@ -34,7 +34,12 @@ contract DataPointRegistry is IDataPointRegistry {
     function allocate(address owner) external payable returns (DataPoint) {
         if (owner == address(0)) revert InvalidOwnerAddress(owner);
         if (msg.value > 0) revert NativeCoinDepositIsNotAccepted();
-        uint256 newCounter = ++_counter;
+
+        uint256 newCounter;
+        unchecked {
+            newCounter = ++_counter;
+        }
+
         if (newCounter > type(uint32).max) revert CounterOverflow();
         DataPoint dp = DataPoints.encode(address(this), uint32(newCounter));
         DPAccessData storage dpd = _accessData[dp];
@@ -57,7 +62,7 @@ contract DataPointRegistry is IDataPointRegistry {
     function grantAdminRole(DataPoint dp, address account) external returns (bool) {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
-        if (!isAdmin(dp, account)) {
+        if (!dpd.isAdmin[account]) {
             dpd.isAdmin[account] = true;
             emit DataPointAdminGranted(dp, account);
             return true;
@@ -69,7 +74,7 @@ contract DataPointRegistry is IDataPointRegistry {
     function revokeAdminRole(DataPoint dp, address account) external returns (bool) {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
-        if (isAdmin(dp, account)) {
+        if (dpd.isAdmin[account]) {
             dpd.isAdmin[account] = false;
             emit DataPointAdminRevoked(dp, account);
             return true;

@@ -50,8 +50,13 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
     /// @dev ERC20 token symbol
     string private _symbol;
 
-    /// @dev Mapping of allowances from user to spender to amount
-    mapping(address account => mapping(address spender => uint256)) private _allowances;
+    /// @dev Struct to store the amount of an allowance
+    struct AllowanceAmount {
+        uint256 amount;
+    }
+
+    /// @dev Mapping of allowances from user to spender to AllowanceAmount
+    mapping(address account => mapping(address spender => AllowanceAmount)) private _allowances;
 
     /// @notice Modifier to check if the caller is the ERC1155 data manager
     modifier onlyTransferNotifier() {
@@ -145,7 +150,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
      * @return The amount of tokens the spender is allowed to spend
      */
     function allowance(address owner_, address spender) public view returns (uint256) {
-        return _allowances[owner_][spender];
+        return _allowances[owner_][spender].amount;
     }
 
     /**
@@ -161,7 +166,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
         if (spender == address(0)) {
             revert ERC20InvalidSpender(address(0));
         }
-        _allowances[_msgSender()][spender] = value;
+        _allowances[_msgSender()][spender].amount = value;
         emit Approval(_msgSender(), spender, value);
         return true;
     }
@@ -213,13 +218,14 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
     }
 
     function _spendAllowance(address owner_, address spender, uint256 amount) internal {
-        uint256 currentAllowance = _allowances[owner_][spender];
-        if (currentAllowance != type(uint256).max) {
-            if (currentAllowance < amount) {
-                revert ERC20InsufficientAllowance(spender, currentAllowance, amount);
+        AllowanceAmount storage currentAllowance = _allowances[owner_][spender];
+        uint256 currentAllowanceAmount = currentAllowance.amount;
+        if (currentAllowanceAmount != type(uint256).max) {
+            if (currentAllowanceAmount < amount) {
+                revert ERC20InsufficientAllowance(spender, currentAllowanceAmount, amount);
             }
             unchecked {
-                _allowances[owner_][spender] = currentAllowance - amount;
+                currentAllowance.amount -= amount;
             }
         }
     }
@@ -228,10 +234,10 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
         if (address(dataIndex) == address(0)) revert ContractNotInitialized();
 
         // In this contract `_writeTransfer()` can not be called with zero `from` or `to` arguments, but if it is changed to allow mint/burn, this is how this operations should be called:
-        // dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, erc1155ID, amount));
-        // dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, erc1155ID, amount));
+        // dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, erc1155ID, amount));
+        // dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, erc1155ID, amount));
 
-        dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, erc1155ID, amount));
+        dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, erc1155ID, amount));
 
         IFractionTransferEventEmitter(erc1155dm).fractionTransferredNotify(from, to, amount);
     }
