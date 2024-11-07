@@ -224,6 +224,10 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
         }
     }
 
+    /**
+     * @dev Mint and burn functions are not implemented in this contract but this function contains the logic for
+     *      easy integration of these functionalities
+     */
     function _writeTransfer(address from, address to, uint256 amount) internal {
         if (address(dataIndex) == address(0)) revert ContractNotInitialized();
         if (from == address(0)) {
