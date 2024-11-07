@@ -15,7 +15,7 @@ import {DataPoints, DataPoint} from "./utils/DataPoints.sol";
  */
 contract DataIndex is IDataIndex, AccessControl {
     /// @dev Mask to get the prefix (first 12 bytes) of the diid
-    bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000;
+    bytes32 internal constant PREFIX_MASK = 0xFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000000000000000000000;
 
     /// @dev Error thrown when the sender is not an admin of the DataPoint
     error InvalidDataPointAdmin(DataPoint dp, address sender);
@@ -76,13 +76,13 @@ contract DataIndex is IDataIndex, AccessControl {
     }
 
     ///@inheritdoc IDataIndex
-    function read(address dobj, DataPoint dp, bytes4 operation, bytes calldata data) external view returns (bytes memory) {
-        return IDataObject(dobj).read(dp, operation, data);
+    function read(IDataObject dobj, DataPoint dp, bytes4 operation, bytes calldata data) external view returns (bytes memory) {
+        return dobj.read(dp, operation, data);
     }
 
     ///@inheritdoc IDataIndex
-    function write(address dobj, DataPoint dp, bytes4 operation, bytes calldata data) external onlyApprovedDM(dp) returns (bytes memory) {
-        return IDataObject(dobj).write(dp, operation, data);
+    function write(IDataObject dobj, DataPoint dp, bytes4 operation, bytes calldata data) external onlyApprovedDM(dp) returns (bytes memory) {
+        return dobj.write(dp, operation, data);
     }
 
     ///@inheritdoc IIDManager

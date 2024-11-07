@@ -431,16 +431,16 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is
 
     function _writeTransfer(address from, address to, uint256 id, uint256 value) internal virtual {
         if (from == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, id, value));
+            dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.mint.selector, abi.encode(to, id, value));
         } else if (to == address(0)) {
-            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, id, value));
+            dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.burn.selector, abi.encode(from, id, value));
         } else {
-            dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, id, value));
+            dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.transferFrom.selector, abi.encode(from, to, id, value));
         }
     }
 
     function _writeTransferBatch(address from, address to, uint256[] memory ids, uint256[] memory values) internal virtual {
-        dataIndex.write(address(fungibleFractionsDO), _datapoint, IFungibleFractionsOperations.batchTransferFrom.selector, abi.encode(from, to, ids, values));
+        dataIndex.write(fungibleFractionsDO, _datapoint, IFungibleFractionsOperations.batchTransferFrom.selector, abi.encode(from, to, ids, values));
     }
 
     /**
@@ -485,7 +485,7 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is
             revert ERC1155InvalidReceiver(address(0));
         }
 
-        _deployERC20DMIfNotDeployed(id, data);
+        _deployERC20DMIfNotDeployed(id);
         _updateWithAcceptanceCheck(address(0), to, id, value, data);
     }
 
@@ -516,24 +516,17 @@ contract MinimalisticERC1155WithERC20FractionsDataManager is
         }
     }
 
-    function _deployERC20DMIfNotDeployed(uint256 id, bytes memory data) internal {
+    function _deployERC20DMIfNotDeployed(uint256 id) internal {
         if (fractionManagersById[id] != address(0)) return; // Already deployed
-        (string memory name_, string memory symbol_) = _prepareNameAndSymbol(data, id);
+        (string memory name_, string memory symbol_) = _prepareNameAndSymbol(id);
         _deployERC20DM(id, name_, symbol_);
     }
 
     function _afterDeployERC20DM(address deployedDM) internal virtual {}
 
-    function _prepareNameAndSymbol(bytes memory data, uint256 id) private view returns (string memory, string memory) {
-        string memory name_;
-        string memory symbol_;
-        if (data.length != 0) {
-            (name_, symbol_) = abi.decode(data, (string, string));
-        } else {
-            name_ = string.concat(name(), " ", Strings.toString(id));
-            symbol_ = string.concat(symbol(), "-", Strings.toString(id));
-        }
-        return (name_, symbol_);
+    function _prepareNameAndSymbol(uint256 id) private view returns (string memory name_, string memory symbol_) {
+        name_ = string.concat(name(), " ", Strings.toString(id));
+        symbol_ = string.concat(symbol(), "-", Strings.toString(id));
     }
 
     function _deployERC20DM(uint256 id, string memory name_, string memory symbol_) private nonReentrant {
