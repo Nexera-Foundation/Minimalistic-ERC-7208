@@ -50,7 +50,12 @@ library DataPoints {
     function encode(address registry, uint32 id) internal view returns (DataPoint) {
         return
             DataPoint.wrap(
-                bytes32((uint256(uint32(PREFIX)) << LITERAL_224) | (uint256(id) << LITERAL_192) | (uint256(ChainidTools.chainid()) << LITERAL_160) | uint256(uint160(registry)))
+                bytes32(
+                    (uint256(uint32(PREFIX)) << LITERAL_224) |
+                        (uint256(id) << LITERAL_192) |
+                        (uint256(ChainidTools.chainid()) << LITERAL_160) |
+                        uint256(uint160(registry))
+                )
             );
     }
 
