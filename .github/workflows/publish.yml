@@ -26,6 +26,9 @@ jobs:
       - name: yarn install --check-cache
         run: yarn install --check-cache
 
+      - name: Authenticate npm with GitHub Packages
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+
       - name: Publish Image for development
         if: github.ref == 'refs/heads/development'
         run: npm publish --tag dev
