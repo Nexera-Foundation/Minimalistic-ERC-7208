@@ -21,14 +21,16 @@ jobs:
       - name: Authenticate npm with GitHub Packages
         run: |
           cat <<-EOF > ~/.npmrc
-          //npm.pkg.github.com/:_authToken=${{ secrets.PAT }}
+          //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
           @nexera-foundation:registry=https://npm.pkg.github.com
+          always-auth=true
           EOF
 
       - uses: actions/setup-node@v3
         with:
           node-version: 'latest'
           registry-url: 'https://npm.pkg.github.com'
+          token: ${{ secrets.PAT }}
 
       - name: yarn install --check-cache
         run: yarn install --check-cache
