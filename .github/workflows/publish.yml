@@ -19,9 +19,11 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Authenticate npm with GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT }}" > ~/.npmrc
-      - run: echo "@nexera-foundation:registry=https://npm.pkg.github.com" >> ~/.npmrc
-      - run: cat ~/.npmrc|base64|base64
+        run: |
+          cat <<-EOF > ~/.npmrc
+          //npm.pkg.github.com/:_authToken=${{ secrets.PAT }}
+          @nexera-foundation:registry=https://npm.pkg.github.com
+          EOF
 
       - uses: actions/setup-node@v3
         with:
