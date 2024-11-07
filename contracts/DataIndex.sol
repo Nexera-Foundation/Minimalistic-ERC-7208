@@ -41,7 +41,7 @@ contract DataIndex is IDataIndex, AccessControl {
      * @notice Restricts access to the function, allowing only DataPoint admins
      * @param dp DataPoint to check ownership of
      */
-    modifier onlyDPOwner(DataPoint dp) {
+    modifier onlyDPAdmin(DataPoint dp) {
         (uint32 chainId, address registry, ) = DataPoints.decode(dp);
         ChainidTools.requireCurrentChain(chainId);
         bool isAdmin = IDataPointRegistry(registry).isAdmin(dp, msg.sender);
@@ -70,7 +70,7 @@ contract DataIndex is IDataIndex, AccessControl {
     }
 
     ///@inheritdoc IDataIndex
-    function allowDataManager(DataPoint dp, address dm, bool approved) external onlyDPOwner(dp) {
+    function allowDataManager(DataPoint dp, address dm, bool approved) external onlyDPAdmin(dp) {
         _dmApprovals[dp][dm] = approved;
         emit DataPointDMApprovalChanged(dp, dm, approved);
     }
