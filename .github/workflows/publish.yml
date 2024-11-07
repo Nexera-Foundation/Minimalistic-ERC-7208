@@ -8,8 +8,9 @@ on:
     paths-ignore:
       - 'package.json'
       - 'package-lock.json'
+
 env:
-  NODE_AUTH_TOKEN: ${{ secrets.PAT }}
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build:
@@ -20,22 +21,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-#      - name: Authenticate npm with GitHub Packages
-#        run: |
-#          cat <<-EOF > ~/.npmrc
-#         //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-#          @nexera-foundation:registry=https://npm.pkg.github.com
-#          always-auth=true
-#          EOF
 
       - uses: actions/setup-node@v3
         with:
           node-version: 'latest'
           registry-url: 'https://npm.pkg.github.com'
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: yarn install --check-cache
         run: yarn install --check-cache
+        
 
       - name: Publish Image for development
         if: github.ref == 'refs/heads/development'
@@ -53,4 +48,4 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: npm publish
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
