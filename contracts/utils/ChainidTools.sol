@@ -29,7 +29,7 @@ library ChainidTools {
      * @param chainId Requested chain ID
      */
     function requireCurrentChain(uint32 chainId) internal view {
-        uint32 currentChain = uint32(block.chainid);
+        uint32 currentChain = chainid();
         if (currentChain != chainId) revert UnexpectedChain(currentChain, chainId);
     }
 }
