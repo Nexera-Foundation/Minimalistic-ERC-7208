@@ -85,7 +85,7 @@ contract DataPointRegistry is IDataPointRegistry {
     function _cleanAdmins(EnumerableSet.AddressSet storage admins) private {
         uint256 length = admins.length();
         address[] memory accounts = admins.values();
-        for (uint256 i = 0; i < length; i++) {
+        for (uint256 i; i < length; i++) {
             admins.remove(accounts[i]);
         }
     }
