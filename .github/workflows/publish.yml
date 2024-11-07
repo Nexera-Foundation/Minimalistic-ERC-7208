@@ -28,6 +28,7 @@ jobs:
 
       - name: Authenticate npm with GitHub Packages
         run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT }}" > ~/.npmrc
+      - run: echo "@nexera-foundation:registry=https://npm.pkg.github.com" >> ~/.npmrc
 
       - name: Publish Image for development
         if: github.ref == 'refs/heads/development'
