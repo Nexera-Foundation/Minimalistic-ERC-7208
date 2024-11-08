@@ -9,6 +9,7 @@ export default async function suite(): Promise<void> {
         let snap: string;
 
         let user1: SignerWithAddress;
+        let user2: SignerWithAddress;
 
         let DataIndex: Contract;
         let DataPointRegistry: Contract;
@@ -17,6 +18,7 @@ export default async function suite(): Promise<void> {
 
         before(async function () {
             user1 = this.user1;
+            user2 = this.user2;
 
             DataIndex = this.DataIndex;
             DataPointRegistry = this.DataPointRegistry;
@@ -55,6 +57,20 @@ export default async function suite(): Promise<void> {
             await expect(DataIndex.connect(user1).getFunction("allowDataManager")(dp, ethers.ZeroAddress, false))
                 .emit(DataIndex, "DataPointDMApprovalChanged")
                 .withArgs(dp, user1, ethers.ZeroAddress, false);
+
+            expect(await DataIndex.isApprovedDataManager(dp, ethers.ZeroAddress)).to.be.equal(false);
+        });
+
+        it("should revoke approval of data manager when DP admin revoked", async function () {
+            await DataPointRegistry.connect(user1).getFunction("grantAdminRole")(dp, user2.address);
+
+            await expect(DataIndex.connect(user2).getFunction("allowDataManager")(dp, ethers.ZeroAddress, true))
+                .emit(DataIndex, "DataPointDMApprovalChanged")
+                .withArgs(dp, user2, ethers.ZeroAddress, true);
+
+            expect(await DataIndex.isApprovedDataManager(dp, ethers.ZeroAddress)).to.be.equal(true);
+
+            await DataPointRegistry.connect(user1).getFunction("revokeAdminRole")(dp, user2.address);
 
             expect(await DataIndex.isApprovedDataManager(dp, ethers.ZeroAddress)).to.be.equal(false);
         });
