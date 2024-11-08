@@ -45,6 +45,20 @@ export default async function suite(): Promise<void> {
             expect(await DataIndex.isApprovedDataManager(dp, ethers.ZeroAddress)).to.be.equal(true);
         });
 
+        it("should revoke approval of data manager", async function () {
+            // First - add approval
+            await expect(DataIndex.connect(user1).getFunction("allowDataManager")(dp, ethers.ZeroAddress, true))
+                .emit(DataIndex, "DataPointDMApprovalChanged")
+                .withArgs(dp, user1, ethers.ZeroAddress, true);
+
+            // Then revoke approval
+            await expect(DataIndex.connect(user1).getFunction("allowDataManager")(dp, ethers.ZeroAddress, false))
+                .emit(DataIndex, "DataPointDMApprovalChanged")
+                .withArgs(dp, user1, ethers.ZeroAddress, false);
+
+            expect(await DataIndex.isApprovedDataManager(dp, ethers.ZeroAddress)).to.be.equal(false);
+        });
+
         it("revert: wrong diid calling ownerOf", async function () {
             const diid = await DataIndex.diid(user1.address, ethers.ZeroHash);
 

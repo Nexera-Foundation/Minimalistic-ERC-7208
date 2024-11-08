@@ -77,7 +77,11 @@ contract DataIndex is IDataIndex, AccessControl {
 
     ///@inheritdoc IDataIndex
     function allowDataManager(DataPoint dp, address dm, bool approved) external onlyDPAdmin(dp) {
-        _dmApprovals[dp][dm] = msg.sender;
+        if (approved) {
+            _dmApprovals[dp][dm] = msg.sender;
+        } else {
+            delete _dmApprovals[dp][dm];
+        }
         emit DataPointDMApprovalChanged(dp, msg.sender, dm, approved);
     }
 
