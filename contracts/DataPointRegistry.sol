@@ -68,9 +68,8 @@ contract DataPointRegistry is IDataPointRegistry {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
 
-        if (!_accessData[dp].admins.contains(account)) {
-            dpd.admins.add(account);
-
+        bool added = dpd.admins.add(account);
+        if (added) {
             emit DataPointAdminGranted(dp, account);
             return true;
         }
@@ -82,9 +81,8 @@ contract DataPointRegistry is IDataPointRegistry {
         DPAccessData storage dpd = _accessData[dp];
         if (msg.sender != dpd.owner) revert InvalidDataPointOwner(dp, msg.sender);
 
-        if (_accessData[dp].admins.contains(account)) {
-            dpd.admins.remove(account);
-
+        bool removed = dpd.admins.remove(account);
+        if (removed) {
             emit DataPointAdminRevoked(dp, account);
             return true;
         }
