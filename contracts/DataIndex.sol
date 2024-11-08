@@ -29,22 +29,25 @@ contract DataIndex is IDataIndex, AccessControl {
     /**
      * @notice Event emitted when DataManager is approved for DataPoint
      * @param dp Identifier of the DataPoint
+     * @param dpAdmin Address of the DataPoint admin who executed the approval change
      * @param dm Address of DataManager
      * @param approved if DataManager is approved
      */
-    event DataPointDMApprovalChanged(DataPoint dp, address dm, bool approved);
+    event DataPointDMApprovalChanged(DataPoint dp, address dpAdmin, address dm, bool approved);
 
-    /// @dev Mapping of DataPoint to DataManagers allowed to write to this DP (in any DataObject)
-    mapping(DataPoint => mapping(address dm => bool allowed)) private _dmApprovals;
+    /**
+     * @dev Mapping of DataPoint to DataManagers allowed to write to this DP (in any DataObject)
+     * We also store address of the admin who approved the DataManager, so that later, on write(),
+     * we can verify it is not revoked
+     */
+    mapping(DataPoint => mapping(address dm => address dpAdmin)) private _dmApprovals;
 
     /**
      * @notice Restricts access to the function, allowing only DataPoint admins
      * @param dp DataPoint to check ownership of
      */
     modifier onlyDPAdmin(DataPoint dp) {
-        (uint32 chainId, address registry, ) = DataPoints.decode(dp);
-        ChainidTools.requireCurrentChain(chainId);
-        bool isAdmin = IDataPointRegistry(registry).isAdmin(dp, msg.sender);
+        bool isAdmin = _isDataPointAdmin(dp, msg.sender);
         if (!isAdmin) revert InvalidDataPointAdmin(dp, msg.sender);
         _;
     }
@@ -54,7 +57,7 @@ contract DataIndex is IDataIndex, AccessControl {
      * @param dp DataPoint to check DataManager approval for
      */
     modifier onlyApprovedDM(DataPoint dp) {
-        bool approved = _dmApprovals[dp][msg.sender];
+        bool approved = isApprovedDataManager(dp, msg.sender);
         if (!approved) revert DataManagerNotApproved(dp, msg.sender);
         _;
     }
@@ -65,14 +68,17 @@ contract DataIndex is IDataIndex, AccessControl {
     }
 
     ///@inheritdoc IDataIndex
-    function isApprovedDataManager(DataPoint dp, address dm) external view returns (bool) {
-        return _dmApprovals[dp][dm];
+    function isApprovedDataManager(DataPoint dp, address dm) public view returns (bool) {
+        address dpAdmin = _dmApprovals[dp][dm];
+        if (dpAdmin == address(0)) return false;
+        // Here we are verifying that address who approved DataManager is still an admin of the DataPoint
+        return _isDataPointAdmin(dp, dpAdmin);
     }
 
     ///@inheritdoc IDataIndex
     function allowDataManager(DataPoint dp, address dm, bool approved) external onlyDPAdmin(dp) {
-        _dmApprovals[dp][dm] = approved;
-        emit DataPointDMApprovalChanged(dp, dm, approved);
+        _dmApprovals[dp][dm] = msg.sender;
+        emit DataPointDMApprovalChanged(dp, msg.sender, dm, approved);
     }
 
     ///@inheritdoc IDataIndex
@@ -96,5 +102,11 @@ contract DataIndex is IDataIndex, AccessControl {
         address account = address(uint160(uint256(diid_)));
         if (account == address(0)) revert IncorrectIdentifier(diid_);
         return (ChainidTools.chainid(), account);
+    }
+
+    function _isDataPointAdmin(DataPoint dp, address account) internal view returns (bool) {
+        (uint32 chainId, address registry, ) = DataPoints.decode(dp);
+        ChainidTools.requireCurrentChain(chainId);
+        return IDataPointRegistry(registry).isAdmin(dp, account);
     }
 }

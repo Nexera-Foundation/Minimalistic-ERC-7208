@@ -40,7 +40,7 @@ export default async function suite(): Promise<void> {
         it("should approve data manager", async function () {
             await expect(DataIndex.connect(user1).getFunction("allowDataManager")(dp, ethers.ZeroAddress, true))
                 .emit(DataIndex, "DataPointDMApprovalChanged")
-                .withArgs(dp, ethers.ZeroAddress, true);
+                .withArgs(dp, user1, ethers.ZeroAddress, true);
 
             expect(await DataIndex.isApprovedDataManager(dp, ethers.ZeroAddress)).to.be.equal(true);
         });
