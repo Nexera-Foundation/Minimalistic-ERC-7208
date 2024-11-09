@@ -225,7 +225,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
                 revert ERC20InsufficientAllowance(spender, currentAllowanceAmount, amount);
             }
             unchecked {
-                currentAllowance.amount = currentAllowanceAmount-amount;
+                currentAllowance.amount = currentAllowanceAmount - amount;
             }
         }
     }
