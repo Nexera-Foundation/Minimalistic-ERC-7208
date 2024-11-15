@@ -1,5 +1,5 @@
 <div align="center">
-
+ 
 # **Minimalistic ODC (ERC-7208) - Example Implementation** <!-- omit in toc -->
 
 ![Build and Test](https://github.com/NexeraProtocol/Minimalistic-Data-Index/actions/workflows/contracts-build-test.yaml/badge.svg)

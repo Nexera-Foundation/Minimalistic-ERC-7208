@@ -1,6 +1,6 @@
 {
     "name": "@nexera-foundation/minimalistic-erc-7208",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Data Index (ERC-7208) minimalistic implementation",
     "main": "index.js",
     "repository": {
