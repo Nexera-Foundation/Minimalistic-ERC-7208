@@ -50,13 +50,8 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
     /// @dev ERC20 token symbol
     string private _symbol;
 
-    /// @dev Struct to store the amount of an allowance
-    struct AllowanceAmount {
-        uint256 amount;
-    }
-
     /// @dev Mapping of allowances from user to spender to AllowanceAmount
-    mapping(address account => mapping(address spender => AllowanceAmount)) private _allowances;
+    mapping(address account => mapping(address spender => uint256 amount)) private _allowances;
 
     /// @notice Modifier to check if the caller is the ERC1155 data manager
     modifier onlyTransferNotifier() {
@@ -150,7 +145,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
      * @return The amount of tokens the spender is allowed to spend
      */
     function allowance(address owner_, address spender) public view returns (uint256) {
-        return _allowances[owner_][spender].amount;
+        return _allowances[owner_][spender];
     }
 
     /**
@@ -166,7 +161,7 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
         if (spender == address(0)) {
             revert ERC20InvalidSpender(address(0));
         }
-        _allowances[_msgSender()][spender].amount = value;
+        _allowances[_msgSender()][spender] = value;
         emit Approval(_msgSender(), spender, value);
         return true;
     }
@@ -218,14 +213,14 @@ contract MinimalisticERC20FractionDataManager is Initializable, IFractionTransfe
     }
 
     function _spendAllowance(address owner_, address spender, uint256 amount) internal {
-        AllowanceAmount storage currentAllowance = _allowances[owner_][spender];
-        uint256 currentAllowanceAmount = currentAllowance.amount;
-        if (currentAllowanceAmount != type(uint256).max) {
-            if (currentAllowanceAmount < amount) {
-                revert ERC20InsufficientAllowance(spender, currentAllowanceAmount, amount);
+        mapping(address => uint256) storage ownerAllowances = _allowances[owner_];
+        uint256 spenderAllowance = ownerAllowances[spender];
+        if (spenderAllowance != type(uint256).max) {
+            if (spenderAllowance < amount) {
+                revert ERC20InsufficientAllowance(spender, spenderAllowance, amount);
             }
             unchecked {
-                currentAllowance.amount = currentAllowanceAmount - amount;
+                ownerAllowances[spender] = spenderAllowance - amount;
             }
         }
     }

@@ -214,6 +214,7 @@ export default async function suite(): Promise<void> {
 
             expect(await MinimalisticERC20FractionDataManager.balanceOf(user1.address)).to.equal(500);
             expect(await MinimalisticERC20FractionDataManager.balanceOf(user2.address)).to.equal(500);
+            expect(await MinimalisticERC20FractionDataManager.allowance(user2.address, user1.address)).to.equal(0);
 
             expect(await MinimalisticERC20FractionDataManager.totalSupply()).to.equal(1000);
         });
