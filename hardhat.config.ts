@@ -8,6 +8,7 @@ import "@typechain/hardhat";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
 import "hardhat-dependency-compiler";
+import "hardhat-gas-reporter"
 
 dotenv.config();
 
@@ -47,7 +48,10 @@ const config: HardhatUserConfig = {
   mocha: {
     // Uncomment when forking live networks
     //timeout: 100000000,
-    parallel: true, // Reduce running time for testing multiple future use-cases
+    //parallel: true, // Reduce running time for testing multiple future use-cases
+  },
+  gasReporter: {
+    enabled: true,
   },
 };
 
